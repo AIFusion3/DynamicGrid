@@ -18,6 +18,7 @@ DynamicGrid is a dynamic data table component developed using React and Mantine 
 
 ```bash
 npm install @mantine/core @mantine/hooks @tabler/icons-react
+npm install git+https://github.com/AIFusion3/DynamicGrid.git
 ```
 
 ## 💻 Usage
@@ -205,34 +206,148 @@ const columnSettings = [
 ```
 
 ### Advanced Usage
-```tsx
-const columnSettings = [
-  {
-    field: 'status',
-    title: 'Status',
-    displayType: 'chip',
-    chipCondition: {
-      field: 'isActive',
-      trueLabel: 'Active',
-      falseLabel: 'Inactive'
-    }
-  },
-  {
-    field: 'profile',
-    title: 'Profile',
-    displayType: 'link',
-    url: '/users/{id}/profile',
-    format: '{firstName} {lastName}'
-  }
-];
 
-<DynamicGrid
-  baseUrl="https://api.example.com"
-  endpoint="/users"
-  columnSettings={columnSettings}
-  enableCheckbox={true}
-  enableEdit={true}
-/>
+```json settings.json
+[
+    {
+        "field": "image",
+        "title": "",
+        "sortable": true,
+        "editable": true,
+        "displayType": "image",
+        "width": "50px",
+        "imageStyle": {
+            "width": "30px",
+            "height": "30px",
+            "borderRadius": "50%"
+        }
+    },
+    {
+        "field": "name",
+        "title": "Ürün Adı",
+        "sortable": true,
+        "editable": false,
+        "displayType": "link",
+        "url": "#{id}",
+        "target": "_blank",
+        "width": "30%",
+        "linkStyle": {
+            "color": "#000",
+            "textDecoration": "none"
+        }
+    },
+    {
+        "field": "price",
+        "title": "Fiyat",
+        "sortable": true,
+        "displayType": "money",
+        "width": "100px"
+    },
+    {
+        "field": "brand",
+        "title": "Marka",
+        "sortable": true
+    },
+    {
+        "field": "productInfo",
+        "title": "Ürün Bilgisi",
+        "format": "{brand} - {weight}"
+    },
+    {
+        "field": "status",
+        "title": "Durum",
+        "displayType": "chip",
+        "chipCondition": {
+            "trueLabel": "Aktif",
+            "falseLabel": "Pasif",
+            "trueColor": "green",
+            "falseColor": "red"
+        }
+    },
+    {
+        "field": "actions",
+        "title": "",
+        "width": "200px",
+        "actions": [
+            {
+                "label": "Düzenle",
+                "name": "edit",
+                "iconName": "edit",
+                "onClick": "edit",
+                "variant": "outline",
+                "icon":"Edit"
+            },
+            {
+                "label": "Sil",
+                "name": "delete",
+                "iconName": "trash",
+                "onClick": "delete",
+                "variant": "light",
+                "icon":"Trash"
+            }
+        ]
+    }
+]
+```
+```tsx
+'use client';
+import { Button, TextInput, Group, Box } from '@mantine/core';
+import { useState } from 'react';
+import gridSettings from './settings.json';
+import DynamicGrid, { ColumnSetting } from 'dynamic-grid';
+
+export default function Home() {
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [queryParams, setQueryParams] = useState({
+    keyword: ''
+  });
+
+  const handleSearch = () => {
+    console.log(searchKeyword);
+    setQueryParams(prev => ({
+      ...prev,
+      keyword: searchKeyword
+    }));
+  };
+
+  return (
+    <main style={{ padding: 20 }}>
+      <Group mb="md">
+        <TextInput
+          placeholder="Arama yap..."
+          value={searchKeyword}
+          onChange={(e) => setSearchKeyword(e.target.value)}
+          style={{ width: 300 }}
+        />
+        <Button onClick={handleSearch}>Ara</Button>
+      </Group>
+
+     <Box style={{height: 'calc(100vh - 100px)'}}>
+     <DynamicGrid
+        baseUrl="http://localhost:3000"
+        endpoint="/api/products"
+        columnSettings={gridSettings as ColumnSetting[]}
+        enableEdit={true}
+        tokenRequired={false}
+        pageSize={10}
+        enableCheckbox={false}
+        queryParams={queryParams}
+        onRowSelected={(selectedRows) => {
+          console.log('Selected rows:', selectedRows);
+        }}
+        tableSettings={{
+          highlightOnHover: false,
+          withTableBorder: true,
+          withColumnBorders: false
+        }}
+        onRowAction={(action, rowData) => {
+          console.log(action, rowData);
+        }}
+      />
+     </Box>
+    </main>
+  );
+}
 ```
 
 ## 📄 License
