@@ -119,11 +119,11 @@ export default function DynamicGrid({
   
       const params = new URLSearchParams();
       params.append('page', currentPage.toString());
-      params.append('pageSize', pageSize.toString());
+      params.append('page_size', pageSize.toString());
       
       if (sortField) {
-        params.append('sortField', sortField);
-        params.append('sortDirection', sortDirection);
+        params.append('sort_field', sortField);
+        params.append('sort_direction', sortDirection);
       }
 
       Object.entries(queryParams).forEach(([key, value]) => {
