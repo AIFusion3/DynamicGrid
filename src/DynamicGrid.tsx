@@ -13,11 +13,12 @@ import {
   Button,
   MantineProvider,
   Checkbox,
+  Menu,
 } from '@mantine/core';
 import * as TablerIcons from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import React from 'react';
-import { IconCheck, IconX } from '@tabler/icons-react';
+import { IconCheck, IconX, IconDotsVertical } from '@tabler/icons-react';
 
 interface ActionButton {
   label: string;
@@ -66,6 +67,7 @@ interface DynamicGridProps {
   queryParams?: Record<string, string>;
   onRowAction?: (actionName: string, rowData: any) => void;
   onRowSelected?: (selectedRows: any[]) => void;
+  isMenuAction?: boolean;
   tableSettings?: {
     highlightOnHover?: boolean;
     withTableBorder?: boolean; 
@@ -84,6 +86,7 @@ export default function DynamicGrid({
   queryParams = {},
   onRowAction,
   onRowSelected,
+  isMenuAction = false,
   tableSettings = {
     highlightOnHover: true,
     withTableBorder: true,
@@ -369,6 +372,7 @@ export default function DynamicGrid({
                     </Group>
                   </Table.Th>
                 ))}
+                {isMenuAction && <Table.Th style={{ width: '50px' }}></Table.Th>}
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
@@ -393,7 +397,7 @@ export default function DynamicGrid({
                         )
                       }
                     >
-                      {setting.actions ? (
+                      {setting.actions && !isMenuAction ? (
                         <Group gap="xs">
                           {setting.actions.map((action, actionIndex) => (
                             <Button
@@ -441,6 +445,32 @@ export default function DynamicGrid({
                       )}
                     </Table.Td>
                   ))}
+                  {isMenuAction && (
+                    <Table.Td>
+                      <Menu>
+                        <Menu.Target>
+                          <ActionIcon variant="subtle">
+                            <IconDotsVertical size={16} />
+                          </ActionIcon>
+                        </Menu.Target>
+                        <Menu.Dropdown>
+                          {columnSettings.map(setting => 
+                            setting.actions?.map((action, actionIndex) => (
+                              <Menu.Item
+                                key={actionIndex}
+                                leftSection={getIcon(action.icon)}
+                                disabled={action.disabled}
+                                color={action.color}
+                                onClick={() => onRowAction?.(action.name, row)}
+                              >
+                                {action.label}
+                              </Menu.Item>
+                            ))
+                          )}
+                        </Menu.Dropdown>
+                      </Menu>
+                    </Table.Td>
+                  )}
                 </Table.Tr>
               ))}
             </Table.Tbody>

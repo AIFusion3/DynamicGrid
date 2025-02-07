@@ -56,26 +56,26 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 import { useEffect, useState } from 'react';
-import { Table, TextInput, Group, Text, ActionIcon, Box, LoadingOverlay, Pagination, Button, MantineProvider, Checkbox, } from '@mantine/core';
+import { Table, TextInput, Group, Text, ActionIcon, Box, LoadingOverlay, Pagination, Button, MantineProvider, Checkbox, Menu, } from '@mantine/core';
 import * as TablerIcons from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import React from 'react';
-import { IconCheck, IconX } from '@tabler/icons-react';
+import { IconCheck, IconX, IconDotsVertical } from '@tabler/icons-react';
 export default function DynamicGrid(_a) {
     var _this = this;
-    var baseUrl = _a.baseUrl, endpoint = _a.endpoint, columnSettings = _a.columnSettings, _b = _a.enableEdit, enableEdit = _b === void 0 ? false : _b, _c = _a.enableCheckbox, enableCheckbox = _c === void 0 ? false : _c, _d = _a.tokenRequired, tokenRequired = _d === void 0 ? false : _d, _e = _a.pageSize, pageSize = _e === void 0 ? 10 : _e, _f = _a.queryParams, queryParams = _f === void 0 ? {} : _f, onRowAction = _a.onRowAction, onRowSelected = _a.onRowSelected, _g = _a.tableSettings, tableSettings = _g === void 0 ? {
+    var baseUrl = _a.baseUrl, endpoint = _a.endpoint, columnSettings = _a.columnSettings, _b = _a.enableEdit, enableEdit = _b === void 0 ? false : _b, _c = _a.enableCheckbox, enableCheckbox = _c === void 0 ? false : _c, _d = _a.tokenRequired, tokenRequired = _d === void 0 ? false : _d, _e = _a.pageSize, pageSize = _e === void 0 ? 10 : _e, _f = _a.queryParams, queryParams = _f === void 0 ? {} : _f, onRowAction = _a.onRowAction, onRowSelected = _a.onRowSelected, _g = _a.isMenuAction, isMenuAction = _g === void 0 ? false : _g, _h = _a.tableSettings, tableSettings = _h === void 0 ? {
         highlightOnHover: true,
         withTableBorder: true,
         withColumnBorders: true
-    } : _g;
-    var _h = useState([]), data = _h[0], setData = _h[1];
-    var _j = useState(true), loading = _j[0], setLoading = _j[1];
-    var _k = useState(null), sortField = _k[0], setSortField = _k[1];
-    var _l = useState('asc'), sortDirection = _l[0], setSortDirection = _l[1];
-    var _m = useState(1), currentPage = _m[0], setCurrentPage = _m[1];
-    var _o = useState(1), totalPages = _o[0], setTotalPages = _o[1];
-    var _p = useState(null), editingCell = _p[0], setEditingCell = _p[1];
-    var _q = useState([]), selectedRows = _q[0], setSelectedRows = _q[1];
+    } : _h;
+    var _j = useState([]), data = _j[0], setData = _j[1];
+    var _k = useState(true), loading = _k[0], setLoading = _k[1];
+    var _l = useState(null), sortField = _l[0], setSortField = _l[1];
+    var _m = useState('asc'), sortDirection = _m[0], setSortDirection = _m[1];
+    var _o = useState(1), currentPage = _o[0], setCurrentPage = _o[1];
+    var _p = useState(1), totalPages = _p[0], setTotalPages = _p[1];
+    var _q = useState(null), editingCell = _q[0], setEditingCell = _q[1];
+    var _r = useState([]), selectedRows = _r[0], setSelectedRows = _r[1];
     var fetchData = function () { return __awaiter(_this, void 0, void 0, function () {
         var headers, token, params_1, response, result, error_1;
         return __generator(this, function (_a) {
@@ -94,10 +94,10 @@ export default function DynamicGrid(_a) {
                     }
                     params_1 = new URLSearchParams();
                     params_1.append('page', currentPage.toString());
-                    params_1.append('pageSize', pageSize.toString());
+                    params_1.append('page_size', pageSize.toString());
                     if (sortField) {
-                        params_1.append('sortField', sortField);
-                        params_1.append('sortDirection', sortDirection);
+                        params_1.append('sort_field', sortField);
+                        params_1.append('sort_direction', sortDirection);
                     }
                     Object.entries(queryParams).forEach(function (_a) {
                         var key = _a[0], value = _a[1];
@@ -309,13 +309,14 @@ export default function DynamicGrid(_a) {
                                 } },
                                 React.createElement(Group, { gap: "xs" },
                                     React.createElement(React.Fragment, null, setting.title),
-                                    sortField === setting.field && (React.createElement(Text, null, sortDirection === 'asc' ? '↑' : '↓'))))); }))),
+                                    sortField === setting.field && (React.createElement(Text, null, sortDirection === 'asc' ? '↑' : '↓'))))); }),
+                            isMenuAction && React.createElement(Table.Th, { style: { width: '50px' } }))),
                     React.createElement(Table.Tbody, null, data.map(function (row, rowIndex) { return (React.createElement(Table.Tr, { key: row.id || rowIndex },
                         enableCheckbox && (React.createElement(Table.Td, null,
                             React.createElement(Checkbox, { checked: selectedRows.some(function (r) { return r.id === row.id; }), onChange: function (e) { return handleRowSelect(row, e.currentTarget.checked); } }))),
                         columnSettings.map(function (setting) { return (React.createElement(Table.Td, { key: setting.field, onDoubleClick: function () {
                                 return handleCellDoubleClick(rowIndex, setting.field, row[setting.field]);
-                            } }, setting.actions ? (React.createElement(Group, { gap: "xs" }, setting.actions.map(function (action, actionIndex) { return (React.createElement(Button, { key: actionIndex, size: action.size || 'xs', variant: action.variant || 'filled', disabled: action.disabled, color: action.color, leftSection: getIcon(action.icon), onClick: function () { return onRowAction === null || onRowAction === void 0 ? void 0 : onRowAction(action.name, row); } }, action.label)); }))) : (editingCell === null || editingCell === void 0 ? void 0 : editingCell.rowIndex) === rowIndex &&
+                            } }, setting.actions && !isMenuAction ? (React.createElement(Group, { gap: "xs" }, setting.actions.map(function (action, actionIndex) { return (React.createElement(Button, { key: actionIndex, size: action.size || 'xs', variant: action.variant || 'filled', disabled: action.disabled, color: action.color, leftSection: getIcon(action.icon), onClick: function () { return onRowAction === null || onRowAction === void 0 ? void 0 : onRowAction(action.name, row); } }, action.label)); }))) : (editingCell === null || editingCell === void 0 ? void 0 : editingCell.rowIndex) === rowIndex &&
                             (editingCell === null || editingCell === void 0 ? void 0 : editingCell.field) === setting.field ? (React.createElement(Group, null,
                             React.createElement(TextInput, { value: editingCell.value, onChange: function (e) {
                                     return setEditingCell(__assign(__assign({}, editingCell), { value: e.target.value }));
@@ -323,7 +324,16 @@ export default function DynamicGrid(_a) {
                             React.createElement(ActionIcon, { color: "green", variant: "subtle", onClick: handleEditSave },
                                 React.createElement(IconCheck, { size: 16 })),
                             React.createElement(ActionIcon, { color: "red", variant: "subtle", onClick: function () { return setEditingCell(null); } },
-                                React.createElement(IconX, { size: 16 })))) : (formatValue(row, setting)))); }))); })))),
+                                React.createElement(IconX, { size: 16 })))) : (formatValue(row, setting)))); }),
+                        isMenuAction && (React.createElement(Table.Td, null,
+                            React.createElement(Menu, null,
+                                React.createElement(Menu.Target, null,
+                                    React.createElement(ActionIcon, { variant: "subtle" },
+                                        React.createElement(IconDotsVertical, { size: 16 }))),
+                                React.createElement(Menu.Dropdown, null, columnSettings.map(function (setting) {
+                                    var _a;
+                                    return (_a = setting.actions) === null || _a === void 0 ? void 0 : _a.map(function (action, actionIndex) { return (React.createElement(Menu.Item, { key: actionIndex, leftSection: getIcon(action.icon), disabled: action.disabled, color: action.color, onClick: function () { return onRowAction === null || onRowAction === void 0 ? void 0 : onRowAction(action.name, row); } }, action.label)); });
+                                }))))))); })))),
             React.createElement(Group, { justify: "center", mt: "md", mb: "md" },
                 React.createElement(Pagination, { value: currentPage, onChange: setCurrentPage, total: totalPages })))));
 }

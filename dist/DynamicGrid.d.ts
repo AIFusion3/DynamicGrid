@@ -43,11 +43,12 @@ interface DynamicGridProps {
     queryParams?: Record<string, string>;
     onRowAction?: (actionName: string, rowData: any) => void;
     onRowSelected?: (selectedRows: any[]) => void;
+    isMenuAction?: boolean;
     tableSettings?: {
         highlightOnHover?: boolean;
         withTableBorder?: boolean;
         withColumnBorders?: boolean;
     };
 }
-export default function DynamicGrid({ baseUrl, endpoint, columnSettings, enableEdit, enableCheckbox, tokenRequired, pageSize, queryParams, onRowAction, onRowSelected, tableSettings, }: DynamicGridProps): React.JSX.Element;
+export default function DynamicGrid({ baseUrl, endpoint, columnSettings, enableEdit, enableCheckbox, tokenRequired, pageSize, queryParams, onRowAction, onRowSelected, isMenuAction, tableSettings, }: DynamicGridProps): React.JSX.Element;
 export {};
