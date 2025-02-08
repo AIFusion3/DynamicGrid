@@ -128,9 +128,10 @@ const MyComponent = () => {
 | tokenRequired | boolean | false | For APIs requiring token |
 | pageSize | number | 10 | Number of records per page |
 | queryParams | object | {} | Query parameters to add to API call |
-| onRowAction | function | - | Callback for action buttons |
-| onRowSelected | function | - | Callback for selected rows |
+| onRowAction | function | - | Callback function triggered when an action button/menu item is clicked. Returns action name and row data |
+| onRowSelected | function | - | Callback function triggered when rows are selected/unselected. Returns array of selected rows when enableCheckbox is true |
 | tableSettings | object | - | Table appearance settings |
+| isMenuAction | boolean | false | When true, action buttons are displayed in a dropdown menu instead of buttons |
 
 ## 📝 Column Settings
 
@@ -331,6 +332,7 @@ export default function Home() {
         tokenRequired={false}
         pageSize={10}
         enableCheckbox={false}
+        isMenuAction={true}
         queryParams={queryParams}
         onRowSelected={(selectedRows) => {
           console.log('Selected rows:', selectedRows);
