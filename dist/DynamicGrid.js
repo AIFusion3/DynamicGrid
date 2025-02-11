@@ -146,11 +146,15 @@ export default function DynamicGrid(_a) {
         }
         setCurrentPage(1);
     };
+    var getNestedValue = function (obj, path) {
+        return path.split('.').reduce(function (acc, part) {
+            return acc && acc[part] !== undefined ? acc[part] : '';
+        }, obj);
+    };
     var formatValue = function (row, setting) {
         var _a;
         if (!row)
             return '';
-        // Format varsa tüm row objesini kullan
         var formatText = function (text) {
             try {
                 var regex = /\{([^}]+)\}/g;
@@ -160,7 +164,7 @@ export default function DynamicGrid(_a) {
                 var result_1 = text;
                 matches.forEach(function (match) {
                     var key = match.slice(1, -1);
-                    result_1 = result_1.replace(match, row[key] || '');
+                    result_1 = result_1.replace(match, getNestedValue(row, key) || '');
                 });
                 return result_1;
             }
@@ -171,10 +175,16 @@ export default function DynamicGrid(_a) {
         if (setting.format) {
             return formatText(setting.format);
         }
-        var value = row[setting.field];
+        var value = getNestedValue(row, setting.field);
         switch (setting.displayType) {
             case 'date':
-                return value ? new Date(value).toLocaleDateString() : '';
+                return value ? new Date(value).toLocaleString('tr-TR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }) : '';
             case 'number':
                 return value ? Number(value).toLocaleString() : '';
             case 'money':
@@ -192,7 +202,7 @@ export default function DynamicGrid(_a) {
                     return value;
                 var checkField = setting.chipCondition.field || setting.field;
                 var checkValue = (_a = setting.chipCondition.value) !== null && _a !== void 0 ? _a : true;
-                var isTrue = row[checkField] === checkValue;
+                var isTrue = getNestedValue(row, checkField) === checkValue;
                 var color = isTrue ?
                     (setting.chipCondition.trueColor || 'green') :
                     (setting.chipCondition.falseColor || 'red');

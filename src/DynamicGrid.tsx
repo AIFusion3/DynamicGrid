@@ -171,10 +171,15 @@ export default function DynamicGrid({
     setCurrentPage(1);
   };
 
+  const getNestedValue = (obj: any, path: string) => {
+    return path.split('.').reduce((acc, part) => {
+      return acc && acc[part] !== undefined ? acc[part] : '';
+    }, obj);
+  };
+
   const formatValue = (row: any, setting: ColumnSetting) => {
     if (!row) return '';
   
-    // Format varsa tüm row objesini kullan
     const formatText = (text: string) => {
       try {
         const regex = /\{([^}]+)\}/g;
@@ -185,7 +190,7 @@ export default function DynamicGrid({
         let result = text;
         matches.forEach(match => {
           const key = match.slice(1, -1);
-          result = result.replace(match, row[key] || '');
+          result = result.replace(match, getNestedValue(row, key) || '');
         });
         
         return result;
@@ -198,11 +203,17 @@ export default function DynamicGrid({
       return formatText(setting.format);
     }
   
-    const value = row[setting.field];
+    const value = getNestedValue(row, setting.field);
     
     switch (setting.displayType) {
       case 'date':
-        return value ? new Date(value).toLocaleDateString() : '';
+        return value ? new Date(value).toLocaleString('tr-TR', {
+          day: '2-digit',
+          month: '2-digit', 
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }) : '';
       case 'number':
         return value ? Number(value).toLocaleString() : '';
       case 'money':
@@ -220,7 +231,7 @@ export default function DynamicGrid({
         
         const checkField = setting.chipCondition.field || setting.field;
         const checkValue = setting.chipCondition.value ?? true;
-        const isTrue = row[checkField] === checkValue;
+        const isTrue = getNestedValue(row, checkField) === checkValue;
         
         const color = isTrue ? 
           (setting.chipCondition.trueColor || 'green') : 

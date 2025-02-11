@@ -120,8 +120,8 @@ const MyComponent = () => {
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| baseUrl | string | - | Base URL of the API |
-| endpoint | string | - | API endpoint |
+| baseUrl | string | - | Base URL of your API (e.g. "https://api.example.com"). Used as prefix for all API requests |
+| endpoint | string | - | API endpoint path (e.g. "/users" or "/api/products"). Combined with baseUrl to form complete API URL |
 | columnSettings | ColumnSetting[] | - | Column configurations |
 | enableEdit | boolean | false | Enables editing feature |
 | enableCheckbox | boolean | false | Enables multiple selection |
@@ -350,6 +350,32 @@ export default function Home() {
     </main>
   );
 }
+```
+
+## 🌐 API Integration
+
+DynamicGrid uses `baseUrl` and `endpoint` parameters to fetch data from REST APIs:
+
+- `baseUrl`: The main URL of your API (e.g., "https://api.example.com"). Used as the base address for all API requests.
+- `endpoint`: The path to fetch data from API (e.g., "/users" or "/api/products"). Combined with baseUrl to form the complete API URL.
+
+Example usages:
+```typescript
+// For user list:
+baseUrl: "https://api.example.com"
+endpoint: "/users"
+// Final URL: https://api.example.com/users
+
+// For product list:
+baseUrl: "https://api.example.com"
+endpoint: "/api/products"
+// Final URL: https://api.example.com/api/products
+
+// With query parameters:
+baseUrl: "https://api.example.com"
+endpoint: "/users"
+queryParams: { status: "active", role: "admin" }
+// Final URL: https://api.example.com/users?status=active&role=admin
 ```
 
 ## 📄 License
