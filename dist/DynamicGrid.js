@@ -56,7 +56,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 import { useEffect, useState } from 'react';
-import { Table, TextInput, Group, Text, ActionIcon, Box, LoadingOverlay, Button, MantineProvider, Checkbox, Menu, } from '@mantine/core';
+import { Table, TextInput, Group, Text, ActionIcon, Box, LoadingOverlay, Pagination, Button, MantineProvider, Checkbox, Menu, } from '@mantine/core';
 import * as TablerIcons from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import React from 'react';
@@ -343,5 +343,13 @@ export default function DynamicGrid(_a) {
                                 React.createElement(Menu.Dropdown, null, columnSettings.map(function (setting) {
                                     var _a;
                                     return (_a = setting.actions) === null || _a === void 0 ? void 0 : _a.map(function (action, actionIndex) { return (React.createElement(Menu.Item, { key: actionIndex, leftSection: getIcon(action.icon), disabled: action.disabled, color: action.color, onClick: function () { return onRowAction === null || onRowAction === void 0 ? void 0 : onRowAction(action.name, row); } }, action.label)); });
-                                }))))))); })))))));
+                                }))))))); })))),
+            React.createElement("div", null,
+                "TotalPage:",
+                totalPages),
+            React.createElement("div", null,
+                "CurrentPage:",
+                currentPage),
+            React.createElement(Group, { justify: "center", mt: "md", mb: "md" },
+                React.createElement(Pagination, { value: currentPage, onChange: setCurrentPage, total: totalPages })))));
 }
