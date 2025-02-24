@@ -316,7 +316,9 @@ export default function DynamicGrid(_a) {
                                         setSelectedRows(newSelectedRows);
                                         onRowSelected === null || onRowSelected === void 0 ? void 0 : onRowSelected(newSelectedRows);
                                     } }))),
-                            columnSettings.map(function (setting) { return (React.createElement(Table.Th, { key: setting.field, onClick: function () {
+                            columnSettings
+                                .filter(function (setting) { return !isMenuAction || !setting.actions; })
+                                .map(function (setting) { return (React.createElement(Table.Th, { key: setting.field, onClick: function () {
                                     return setting.sortable ? handleSort(setting.field) : undefined;
                                 }, style: {
                                     cursor: setting.sortable ? 'pointer' : 'default',
@@ -329,7 +331,9 @@ export default function DynamicGrid(_a) {
                     React.createElement(Table.Tbody, null, data.map(function (row, rowIndex) { return (React.createElement(Table.Tr, { key: row.id || rowIndex },
                         enableCheckbox && (React.createElement(Table.Td, null,
                             React.createElement(Checkbox, { checked: selectedRows.some(function (r) { return r.id === row.id; }), onChange: function (e) { return handleRowSelect(row, e.currentTarget.checked); } }))),
-                        columnSettings.map(function (setting) { return (React.createElement(Table.Td, { key: setting.field, onDoubleClick: function () {
+                        columnSettings
+                            .filter(function (setting) { return !isMenuAction || !setting.actions; })
+                            .map(function (setting) { return (React.createElement(Table.Td, { key: setting.field, onDoubleClick: function () {
                                 return handleCellDoubleClick(rowIndex, setting.field, row[setting.field]);
                             } }, setting.actions && !isMenuAction ? (React.createElement(Group, { gap: "xs" }, setting.actions.map(function (action, actionIndex) { return (React.createElement(Button, { key: actionIndex, size: action.size || 'xs', variant: action.variant || 'filled', disabled: action.disabled, color: action.color, leftSection: getIcon(action.icon), onClick: function () { return onRowAction === null || onRowAction === void 0 ? void 0 : onRowAction(action.name, row); } }, action.label)); }))) : (editingCell === null || editingCell === void 0 ? void 0 : editingCell.rowIndex) === rowIndex &&
                             (editingCell === null || editingCell === void 0 ? void 0 : editingCell.field) === setting.field ? (React.createElement(Group, null,

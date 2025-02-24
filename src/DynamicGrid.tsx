@@ -370,25 +370,27 @@ export default function DynamicGrid({
                     />
                   </Table.Th>
                 )}
-                {columnSettings.map((setting) => (
-                  <Table.Th
-                    key={setting.field}
-                    onClick={() =>
-                      setting.sortable ? handleSort(setting.field) : undefined
-                    }
-                    style={{ 
-                      cursor: setting.sortable ? 'pointer' : 'default',
-                      width: setting.width || 'auto'
-                    }}
-                  >
-                    <Group gap="xs">
-                      <>{setting.title}</>
-                      {sortField === setting.field && (
-                        <Text>{sortDirection === 'asc' ? '↑' : '↓'}</Text>
-                      )}
-                    </Group>
-                  </Table.Th>
-                ))}
+                {columnSettings
+                  .filter(setting => !isMenuAction || !setting.actions)
+                  .map((setting) => (
+                    <Table.Th
+                      key={setting.field}
+                      onClick={() =>
+                        setting.sortable ? handleSort(setting.field) : undefined
+                      }
+                      style={{ 
+                        cursor: setting.sortable ? 'pointer' : 'default',
+                        width: setting.width || 'auto'
+                      }}
+                    >
+                      <Group gap="xs">
+                        <>{setting.title}</>
+                        {sortField === setting.field && (
+                          <Text>{sortDirection === 'asc' ? '↑' : '↓'}</Text>
+                        )}
+                      </Group>
+                    </Table.Th>
+                  ))}
                 {isMenuAction && <Table.Th style={{ width: '50px' }}></Table.Th>}
               </Table.Tr>
             </Table.Thead>
@@ -403,65 +405,67 @@ export default function DynamicGrid({
                       />
                     </Table.Td>
                   )}
-                  {columnSettings.map((setting) => (
-                    <Table.Td
-                      key={setting.field}
-                      onDoubleClick={() =>
-                        handleCellDoubleClick(
-                          rowIndex,
-                          setting.field,
-                          row[setting.field]
-                        )
-                      }
-                    >
-                      {setting.actions && !isMenuAction ? (
-                        <Group gap="xs">
-                          {setting.actions.map((action, actionIndex) => (
-                            <Button
-                              key={actionIndex}
-                              size={action.size || 'xs'}
-                              variant={action.variant || 'filled'}
-                              disabled={action.disabled}
-                              color={action.color}
-                              leftSection={getIcon(action.icon)}
-                              onClick={() => onRowAction?.(action.name, row)}
+                  {columnSettings
+                    .filter(setting => !isMenuAction || !setting.actions)
+                    .map((setting) => (
+                      <Table.Td
+                        key={setting.field}
+                        onDoubleClick={() =>
+                          handleCellDoubleClick(
+                            rowIndex,
+                            setting.field,
+                            row[setting.field]
+                          )
+                        }
+                      >
+                        {setting.actions && !isMenuAction ? (
+                          <Group gap="xs">
+                            {setting.actions.map((action, actionIndex) => (
+                              <Button
+                                key={actionIndex}
+                                size={action.size || 'xs'}
+                                variant={action.variant || 'filled'}
+                                disabled={action.disabled}
+                                color={action.color}
+                                leftSection={getIcon(action.icon)}
+                                onClick={() => onRowAction?.(action.name, row)}
+                              >
+                                {action.label}
+                              </Button>
+                            ))}
+                          </Group>
+                        ) : editingCell?.rowIndex === rowIndex &&
+                          editingCell?.field === setting.field ? (
+                          <Group>
+                            <TextInput
+                              value={editingCell.value}
+                              onChange={(e) =>
+                                setEditingCell({
+                                  ...editingCell,
+                                  value: e.target.value,
+                                })
+                              }
+                            />
+                            <ActionIcon
+                              color="green"
+                              variant="subtle"
+                              onClick={handleEditSave}
                             >
-                              {action.label}
-                            </Button>
-                          ))}
-                        </Group>
-                      ) : editingCell?.rowIndex === rowIndex &&
-                        editingCell?.field === setting.field ? (
-                        <Group>
-                          <TextInput
-                            value={editingCell.value}
-                            onChange={(e) =>
-                              setEditingCell({
-                                ...editingCell,
-                                value: e.target.value,
-                              })
-                            }
-                          />
-                          <ActionIcon
-                            color="green"
-                            variant="subtle"
-                            onClick={handleEditSave}
-                          >
-                            <IconCheck size={16} />
-                          </ActionIcon>
-                          <ActionIcon
-                            color="red"
-                            variant="subtle"
-                            onClick={() => setEditingCell(null)}
-                          >
-                            <IconX size={16} />
-                          </ActionIcon>
-                        </Group>
-                      ) : (
-                        formatValue(row, setting)
-                      )}
-                    </Table.Td>
-                  ))}
+                              <IconCheck size={16} />
+                            </ActionIcon>
+                            <ActionIcon
+                              color="red"
+                              variant="subtle"
+                              onClick={() => setEditingCell(null)}
+                            >
+                              <IconX size={16} />
+                            </ActionIcon>
+                          </Group>
+                        ) : (
+                          formatValue(row, setting)
+                        )}
+                      </Table.Td>
+                    ))}
                   {isMenuAction && (
                     <Table.Td>
                       <Menu>
