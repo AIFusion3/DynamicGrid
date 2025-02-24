@@ -173,7 +173,13 @@ export default function DynamicGrid({
 
   const getNestedValue = (obj: any, path: string) => {
     return path.split('.').reduce((acc, part) => {
-      return acc && acc[part] !== undefined ? acc[part] : '';
+      if (!acc) return '';
+      
+      if (Array.isArray(acc)) {
+        return acc.map(item => item[part]).filter(Boolean).join(', ');
+      }
+      
+      return acc[part] !== undefined ? acc[part] : '';
     }, obj);
   };
 

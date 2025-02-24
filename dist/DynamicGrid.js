@@ -148,7 +148,12 @@ export default function DynamicGrid(_a) {
     };
     var getNestedValue = function (obj, path) {
         return path.split('.').reduce(function (acc, part) {
-            return acc && acc[part] !== undefined ? acc[part] : '';
+            if (!acc)
+                return '';
+            if (Array.isArray(acc)) {
+                return acc.map(function (item) { return item[part]; }).filter(Boolean).join(', ');
+            }
+            return acc[part] !== undefined ? acc[part] : '';
         }, obj);
     };
     var formatValue = function (row, setting) {
