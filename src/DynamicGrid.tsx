@@ -141,7 +141,7 @@ export default function DynamicGrid({
       const result = await response.json();
       
       setData(result.data);
-      setTotalPages(Math.ceil(result.total / result.pageSize));
+      setTotalPages(result.page);
   
     } catch (error) {
       console.error('Fetch error:', error);
