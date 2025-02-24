@@ -488,15 +488,8 @@ export default function DynamicGrid({
           </Table>
         </Box>
 
-        <div>TotalPage:{totalPages}</div>
-        <div>CurrentPage:{currentPage}</div>
-        <Group justify="center" mt="md" mb="md">
-          <Pagination
-            value={currentPage}
-            onChange={setCurrentPage}
-            total={totalPages}
-          />
-        </Group>
+       
+       
       </Box>
     </MantineProvider>
   );
