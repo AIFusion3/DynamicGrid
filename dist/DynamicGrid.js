@@ -113,7 +113,7 @@ export default function DynamicGrid(_a) {
                 case 2:
                     result = _a.sent();
                     setData(result.data);
-                    setTotalPages(result.total);
+                    setTotalPages(result.page);
                     return [3 /*break*/, 5];
                 case 3:
                     error_1 = _a.sent();
@@ -344,12 +344,6 @@ export default function DynamicGrid(_a) {
                                     var _a;
                                     return (_a = setting.actions) === null || _a === void 0 ? void 0 : _a.map(function (action, actionIndex) { return (React.createElement(Menu.Item, { key: actionIndex, leftSection: getIcon(action.icon), disabled: action.disabled, color: action.color, onClick: function () { return onRowAction === null || onRowAction === void 0 ? void 0 : onRowAction(action.name, row); } }, action.label)); });
                                 }))))))); })))),
-            React.createElement("div", null,
-                "TotalPage:",
-                totalPages),
-            React.createElement("div", null,
-                "CurrentPage:",
-                currentPage),
             React.createElement(Group, { justify: "center", mt: "md", mb: "md" },
                 React.createElement(Pagination, { value: currentPage, onChange: setCurrentPage, total: totalPages })))));
 }

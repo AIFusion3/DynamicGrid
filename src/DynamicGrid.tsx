@@ -141,7 +141,7 @@ export default function DynamicGrid({
       const result = await response.json();
       
       setData(result.data);
-      setTotalPages(result.total);
+      setTotalPages(result.page);
   
     } catch (error) {
       console.error('Fetch error:', error);
@@ -488,8 +488,6 @@ export default function DynamicGrid({
           </Table>
         </Box>
 
-        <div>TotalPage:{totalPages}</div>
-        <div>CurrentPage:{currentPage}</div>
         <Group justify="center" mt="md" mb="md">
           <Pagination
             value={currentPage}
