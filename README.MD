@@ -41,6 +41,18 @@ const MyComponent = () => {
       editable: true
     },
     {
+      field: 'createdAt',
+      title: 'Created Date',
+      displayType: 'date',
+      sortable: true
+    },
+    {
+      field: 'updatedAt',
+      title: 'Last Update',
+      displayType: 'datetime',
+      sortable: true
+    },
+    {
       field: 'avatar',
       title: 'Profile',
       displayType: 'image',
@@ -142,7 +154,7 @@ interface ColumnSetting {
   width?: string | number;     // Column width
   sortable?: boolean;          // Sortable
   editable?: boolean;          // Editable
-  displayType?: 'text' | 'date' | 'number' | 'money' | 'image' | 'link' | 'chip';
+  displayType?: 'text' | 'date' | 'datetime' | 'number' | 'money' | 'image' | 'link' | 'chip';
   format?: string;             // Value format
   url?: string;                // URL for link
   target?: string;             // Link target
@@ -381,5 +393,16 @@ queryParams: { status: "active", role: "admin" }
 ## 📄 License
 
 MIT
+
+## 📅 Display Types
+
+- **text**: Basic text display
+- **date**: Date only format (DD/MM/YYYY)
+- **datetime**: Date and time format (DD/MM/YYYY HH:MM)
+- **number**: Formatted number
+- **money**: Currency format
+- **image**: Image display
+- **link**: Clickable link
+- **chip**: Colored badge/chip
 
  

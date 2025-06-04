@@ -23,7 +23,7 @@ export interface ColumnSetting {
     sortable?: boolean;
     editable?: boolean;
     editField?: string;
-    displayType?: 'text' | 'date' | 'number' | 'money' | 'image' | 'link' | 'chip';
+    displayType?: 'text' | 'date' | 'datetime' | 'number' | 'money' | 'image' | 'link' | 'chip';
     format?: string;
     url?: string;
     target?: '_self' | '_blank' | '_parent' | '_top';
