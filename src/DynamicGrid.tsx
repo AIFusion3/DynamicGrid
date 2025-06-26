@@ -15,14 +15,13 @@ import {
   Checkbox,
   Menu,
 } from '@mantine/core';
-import * as TablerIcons from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import React from 'react';
 import { IconCheck, IconX, IconDotsVertical } from '@tabler/icons-react';
 
 interface ActionButton {
   label: string;
-  icon?: string;
+  icon?: React.ReactElement;
   name: string;
   variant?: 'filled' | 'light' | 'outline' | 'subtle' | 'transparent' | 'white' | 'gradient';
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -337,12 +336,6 @@ export default function DynamicGrid({
     onRowSelected?.(newSelectedRows);
   };
 
-  const getIcon = (iconName?: string) => {
-    if (!iconName) return null;
-    const IconComponent = (TablerIcons as any)[`Icon${iconName}`];
-    return IconComponent ? <IconComponent size={16} /> : null;
-  };
-
   return (
     <MantineProvider>
       <Box 
@@ -433,7 +426,7 @@ export default function DynamicGrid({
                                 variant={action.variant || 'filled'}
                                 disabled={action.disabled}
                                 color={action.color}
-                                leftSection={getIcon(action.icon)}
+                                leftSection={action.icon}
                                 onClick={() => onRowAction?.(action.name, row)}
                               >
                                 {action.label}
@@ -485,7 +478,7 @@ export default function DynamicGrid({
                             setting.actions?.map((action, actionIndex) => (
                               <Menu.Item
                                 key={actionIndex}
-                                leftSection={getIcon(action.icon)}
+                                leftSection={action.icon}
                                 disabled={action.disabled}
                                 color={action.color}
                                 onClick={() => onRowAction?.(action.name, row)}

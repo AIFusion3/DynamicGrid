@@ -57,7 +57,6 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 };
 import { useEffect, useState } from 'react';
 import { Table, TextInput, Group, Text, ActionIcon, Box, LoadingOverlay, Pagination, Button, MantineProvider, Checkbox, Menu, } from '@mantine/core';
-import * as TablerIcons from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import React from 'react';
 import { IconCheck, IconX, IconDotsVertical } from '@tabler/icons-react';
@@ -298,12 +297,6 @@ export default function DynamicGrid(_a) {
         setSelectedRows(newSelectedRows);
         onRowSelected === null || onRowSelected === void 0 ? void 0 : onRowSelected(newSelectedRows);
     };
-    var getIcon = function (iconName) {
-        if (!iconName)
-            return null;
-        var IconComponent = TablerIcons["Icon".concat(iconName)];
-        return IconComponent ? React.createElement(IconComponent, { size: 16 }) : null;
-    };
     return (React.createElement(MantineProvider, null,
         React.createElement(Box, { pos: "relative", style: {
                 display: 'flex',
@@ -341,7 +334,7 @@ export default function DynamicGrid(_a) {
                             .filter(function (setting) { return !isMenuAction || !setting.actions; })
                             .map(function (setting) { return (React.createElement(Table.Td, { key: setting.field, onDoubleClick: function () {
                                 return handleCellDoubleClick(rowIndex, setting.field, row[setting.field]);
-                            } }, setting.actions && !isMenuAction ? (React.createElement(Group, { gap: "xs" }, setting.actions.map(function (action, actionIndex) { return (React.createElement(Button, { key: actionIndex, size: action.size || 'xs', variant: action.variant || 'filled', disabled: action.disabled, color: action.color, leftSection: getIcon(action.icon), onClick: function () { return onRowAction === null || onRowAction === void 0 ? void 0 : onRowAction(action.name, row); } }, action.label)); }))) : (editingCell === null || editingCell === void 0 ? void 0 : editingCell.rowIndex) === rowIndex &&
+                            } }, setting.actions && !isMenuAction ? (React.createElement(Group, { gap: "xs" }, setting.actions.map(function (action, actionIndex) { return (React.createElement(Button, { key: actionIndex, size: action.size || 'xs', variant: action.variant || 'filled', disabled: action.disabled, color: action.color, leftSection: action.icon, onClick: function () { return onRowAction === null || onRowAction === void 0 ? void 0 : onRowAction(action.name, row); } }, action.label)); }))) : (editingCell === null || editingCell === void 0 ? void 0 : editingCell.rowIndex) === rowIndex &&
                             (editingCell === null || editingCell === void 0 ? void 0 : editingCell.field) === setting.field ? (React.createElement(Group, null,
                             React.createElement(TextInput, { value: editingCell.value, onChange: function (e) {
                                     return setEditingCell(__assign(__assign({}, editingCell), { value: e.target.value }));
@@ -357,7 +350,7 @@ export default function DynamicGrid(_a) {
                                         React.createElement(IconDotsVertical, { size: 16 }))),
                                 React.createElement(Menu.Dropdown, null, columnSettings.map(function (setting) {
                                     var _a;
-                                    return (_a = setting.actions) === null || _a === void 0 ? void 0 : _a.map(function (action, actionIndex) { return (React.createElement(Menu.Item, { key: actionIndex, leftSection: getIcon(action.icon), disabled: action.disabled, color: action.color, onClick: function () { return onRowAction === null || onRowAction === void 0 ? void 0 : onRowAction(action.name, row); } }, action.label)); });
+                                    return (_a = setting.actions) === null || _a === void 0 ? void 0 : _a.map(function (action, actionIndex) { return (React.createElement(Menu.Item, { key: actionIndex, leftSection: action.icon, disabled: action.disabled, color: action.color, onClick: function () { return onRowAction === null || onRowAction === void 0 ? void 0 : onRowAction(action.name, row); } }, action.label)); });
                                 }))))))); })))),
             React.createElement(Group, { justify: "center", mt: "md", mb: "md" },
                 React.createElement(Pagination, { value: currentPage, onChange: setCurrentPage, total: totalPages })))));

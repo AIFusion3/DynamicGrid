@@ -1,7 +1,7 @@
 import React from 'react';
 interface ActionButton {
     label: string;
-    icon?: string;
+    icon?: React.ReactElement;
     name: string;
     variant?: 'filled' | 'light' | 'outline' | 'subtle' | 'transparent' | 'white' | 'gradient';
     size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
