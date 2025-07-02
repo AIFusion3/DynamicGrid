@@ -59,22 +59,27 @@ import { useEffect, useState } from 'react';
 import { Table, TextInput, Group, Text, ActionIcon, Box, LoadingOverlay, Pagination, Button, MantineProvider, Checkbox, Menu, } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import React from 'react';
-import { IconCheck, IconX, IconDotsVertical } from '@tabler/icons-react';
+import { IconCheck, IconX, IconDotsVertical, IconArrowsSort } from '@tabler/icons-react';
 export default function DynamicGrid(_a) {
     var _this = this;
     var baseUrl = _a.baseUrl, endpoint = _a.endpoint, columnSettings = _a.columnSettings, _b = _a.enableEdit, enableEdit = _b === void 0 ? false : _b, _c = _a.enableCheckbox, enableCheckbox = _c === void 0 ? false : _c, _d = _a.tokenRequired, tokenRequired = _d === void 0 ? false : _d, _e = _a.pageSize, pageSize = _e === void 0 ? 10 : _e, _f = _a.queryParams, queryParams = _f === void 0 ? {} : _f, onRowAction = _a.onRowAction, onRowSelected = _a.onRowSelected, _g = _a.isMenuAction, isMenuAction = _g === void 0 ? false : _g, _h = _a.tableSettings, tableSettings = _h === void 0 ? {
         highlightOnHover: true,
         withTableBorder: true,
         withColumnBorders: true
-    } : _h;
-    var _j = useState([]), data = _j[0], setData = _j[1];
-    var _k = useState(true), loading = _k[0], setLoading = _k[1];
-    var _l = useState(null), sortField = _l[0], setSortField = _l[1];
-    var _m = useState('asc'), sortDirection = _m[0], setSortDirection = _m[1];
-    var _o = useState(1), currentPage = _o[0], setCurrentPage = _o[1];
-    var _p = useState(1), totalPages = _p[0], setTotalPages = _p[1];
-    var _q = useState(null), editingCell = _q[0], setEditingCell = _q[1];
-    var _r = useState([]), selectedRows = _r[0], setSelectedRows = _r[1];
+    } : _h, _j = _a.footerSettings, footerSettings = _j === void 0 ? {
+        enabled: false,
+        endpoint: '',
+    } : _j;
+    var _k = useState([]), data = _k[0], setData = _k[1];
+    var _l = useState(true), loading = _l[0], setLoading = _l[1];
+    var _m = useState(null), sortField = _m[0], setSortField = _m[1];
+    var _o = useState('asc'), sortDirection = _o[0], setSortDirection = _o[1];
+    var _p = useState(1), currentPage = _p[0], setCurrentPage = _p[1];
+    var _q = useState(1), totalPages = _q[0], setTotalPages = _q[1];
+    var _r = useState(null), editingCell = _r[0], setEditingCell = _r[1];
+    var _s = useState([]), selectedRows = _s[0], setSelectedRows = _s[1];
+    var _t = useState(null), footerData = _t[0], setFooterData = _t[1];
+    var _u = useState(false), footerLoading = _u[0], setFooterLoading = _u[1];
     var fetchData = function () { return __awaiter(_this, void 0, void 0, function () {
         var headers, token, params_1, response, result, error_1;
         return __generator(this, function (_a) {
@@ -132,8 +137,62 @@ export default function DynamicGrid(_a) {
             }
         });
     }); };
+    var fetchFooterData = function () { return __awaiter(_this, void 0, void 0, function () {
+        var headers, token, params_2, response, result, error_2;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!(footerSettings === null || footerSettings === void 0 ? void 0 : footerSettings.enabled) || !footerSettings.endpoint)
+                        return [2 /*return*/];
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 4, 5, 6]);
+                    setFooterLoading(true);
+                    headers = {
+                        'Content-Type': 'application/json',
+                    };
+                    if (tokenRequired) {
+                        token = localStorage.getItem('token');
+                        if (token) {
+                            headers['Authorization'] = "Bearer ".concat(token);
+                        }
+                    }
+                    params_2 = new URLSearchParams();
+                    Object.entries(queryParams).forEach(function (_a) {
+                        var key = _a[0], value = _a[1];
+                        params_2.append(key, value);
+                    });
+                    return [4 /*yield*/, fetch("".concat(baseUrl).concat(footerSettings.endpoint, "?").concat(params_2.toString()), {
+                            method: 'GET',
+                            headers: headers
+                        })];
+                case 2:
+                    response = _a.sent();
+                    return [4 /*yield*/, response.json()];
+                case 3:
+                    result = _a.sent();
+                    setFooterData(result);
+                    return [3 /*break*/, 6];
+                case 4:
+                    error_2 = _a.sent();
+                    console.error('Footer fetch error:', error_2);
+                    setFooterData(null);
+                    notifications.show({
+                        title: 'Error',
+                        message: 'Failed to fetch footer data',
+                        color: 'red',
+                    });
+                    return [3 /*break*/, 6];
+                case 5:
+                    setFooterLoading(false);
+                    return [7 /*endfinally*/];
+                case 6: return [2 /*return*/];
+            }
+        });
+    }); };
     useEffect(function () {
         fetchData();
+        fetchFooterData();
     }, [currentPage, sortField, sortDirection, JSON.stringify(queryParams)]);
     var handleSort = function (field) {
         if (sortField === field) {
@@ -241,7 +300,7 @@ export default function DynamicGrid(_a) {
         setEditingCell({ rowIndex: rowIndex, field: field, value: value });
     };
     var handleEditSave = function () { return __awaiter(_this, void 0, void 0, function () {
-        var headers, token, setting, updateField, newData, error_2;
+        var headers, token, setting, updateField, newData, error_3;
         var _a, _b;
         return __generator(this, function (_c) {
             switch (_c.label) {
@@ -280,7 +339,7 @@ export default function DynamicGrid(_a) {
                     });
                     return [3 /*break*/, 4];
                 case 3:
-                    error_2 = _c.sent();
+                    error_3 = _c.sent();
                     notifications.show({
                         title: 'Error',
                         message: 'Failed to update',
@@ -325,7 +384,7 @@ export default function DynamicGrid(_a) {
                                 } },
                                 React.createElement(Group, { gap: "xs" },
                                     React.createElement(React.Fragment, null, setting.title),
-                                    sortField === setting.field && (React.createElement(Text, null, sortDirection === 'asc' ? '↑' : '↓'))))); }),
+                                    setting.sortable && (sortField === setting.field ? (React.createElement(Text, null, sortDirection === 'asc' ? '↑' : '↓')) : (React.createElement(IconArrowsSort, { size: 14, style: { opacity: 0.5 } })))))); }),
                             isMenuAction && React.createElement(Table.Th, { style: { width: '50px' } }))),
                     React.createElement(Table.Tbody, null, data.map(function (row, rowIndex) { return (React.createElement(Table.Tr, { key: row.id || rowIndex },
                         enableCheckbox && (React.createElement(Table.Td, null,
@@ -351,7 +410,15 @@ export default function DynamicGrid(_a) {
                                 React.createElement(Menu.Dropdown, null, columnSettings.map(function (setting) {
                                     var _a;
                                     return (_a = setting.actions) === null || _a === void 0 ? void 0 : _a.map(function (action, actionIndex) { return (React.createElement(Menu.Item, { key: actionIndex, leftSection: action.icon, disabled: action.disabled, color: action.color, onClick: function () { return onRowAction === null || onRowAction === void 0 ? void 0 : onRowAction(action.name, row); } }, action.label)); });
-                                }))))))); })))),
+                                }))))))); })),
+                    (footerSettings === null || footerSettings === void 0 ? void 0 : footerSettings.enabled) && footerData && (React.createElement(Table.Tfoot, null,
+                        React.createElement(Table.Tr, { style: footerSettings.style },
+                            enableCheckbox && React.createElement(Table.Td, null),
+                            columnSettings
+                                .filter(function (setting) { return !isMenuAction || !setting.actions; })
+                                .map(function (setting) { return (React.createElement(Table.Td, { key: setting.field }, footerData[setting.field] !== undefined ?
+                                formatValue(footerData, setting) : '')); }),
+                            isMenuAction && React.createElement(Table.Td, null)))))),
             React.createElement(Group, { justify: "center", mt: "md", mb: "md" },
                 React.createElement(Pagination, { value: currentPage, onChange: setCurrentPage, total: totalPages })))));
 }

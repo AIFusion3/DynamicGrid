@@ -49,6 +49,11 @@ interface DynamicGridProps {
         withTableBorder?: boolean;
         withColumnBorders?: boolean;
     };
+    footerSettings?: {
+        enabled: boolean;
+        endpoint: string;
+        style?: React.CSSProperties;
+    };
 }
-export default function DynamicGrid({ baseUrl, endpoint, columnSettings, enableEdit, enableCheckbox, tokenRequired, pageSize, queryParams, onRowAction, onRowSelected, isMenuAction, tableSettings, }: DynamicGridProps): React.JSX.Element;
+export default function DynamicGrid({ baseUrl, endpoint, columnSettings, enableEdit, enableCheckbox, tokenRequired, pageSize, queryParams, onRowAction, onRowSelected, isMenuAction, tableSettings, footerSettings, }: DynamicGridProps): React.JSX.Element;
 export {};

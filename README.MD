@@ -199,6 +199,72 @@ Expected response format from API:
 }
 ```
 
+## 📊 Footer Feature
+
+DynamicGrid'e tablo alt kısmında özet bilgileri gösterebilen footer özelliği eklenmiştir. Bu özellik ayrı bir API endpoint'inden tek bir obje çekerek, sütun field'larıyla eşleşen verileri footer satırında gösterir.
+
+### Footer Kullanımı
+
+```tsx
+<DynamicGrid
+  baseUrl="https://api.example.com"
+  endpoint="/users"
+  columnSettings={[
+    { field: 'name', title: 'İsim', sortable: true },
+    { field: 'salary', title: 'Maaş', displayType: 'money' },
+    { field: 'age', title: 'Yaş', displayType: 'number' },
+    { field: 'count', title: 'Toplam Kayıt', displayType: 'number' }
+  ]}
+  footerSettings={{
+    enabled: true,
+    endpoint: '/users/summary',
+    style: { 
+      backgroundColor: '#f8f9fa', 
+      fontWeight: 'bold',
+      borderTop: '2px solid #dee2e6'
+    }
+  }}
+/>
+```
+
+### Footer API Response Formatı
+
+Footer endpoint'i tek bir obje dönmelidir. Bu obje, sütun field'larıyla eşleşen property'lere sahip olmalıdır:
+
+```json
+{
+  "name": "TOPLAM",
+  "salary": 125000.50,
+  "age": null,
+  "count": 45
+}
+```
+
+### Footer Ayarları
+
+```typescript
+footerSettings?: {
+  enabled: boolean;        // Footer'ı aktif/pasif yapar
+  endpoint: string;        // Footer verilerini çekeceği API endpoint'i
+  style?: CSSProperties;   // Footer satırına uygulanacak CSS stilleri
+}
+```
+
+### Footer Özellikler
+
+- **Otomatik Formatlama**: Footer verileri, sütun ayarlarındaki `displayType`'a göre formatlanır (money, number, date vb.)
+- **Boş Değer Kontrolü**: Footer'da bulunmayan field'lar boş gösterilir
+- **Stil Özelleştirme**: Footer satırına özel CSS stilleri uygulanabilir
+- **Token Desteği**: Ana veri çekimi gibi token gerektiren API'lar desteklenir
+- **Query Parametreleri**: Ana tablodaki query parametreleri footer API'sine de gönderilir
+
+### Footer Kullanım Senaryoları
+
+- **Finansal Tablolar**: Toplam tutar, ortalama değer
+- **Personel Listeleri**: Toplam maaş, personel sayısı
+- **Satış Raporları**: Toplam satış, ortalama sipariş tutarı
+- **Envanter Yönetimi**: Toplam stok değeri, ürün sayısı
+
 ## 🔐 Token Usage
 
 When `tokenRequired` is set to true, the component reads the 'token' key from localStorage and adds it as a Bearer token to API requests.

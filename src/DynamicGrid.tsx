@@ -17,7 +17,7 @@ import {
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import React from 'react';
-import { IconCheck, IconX, IconDotsVertical } from '@tabler/icons-react';
+import { IconCheck, IconX, IconDotsVertical, IconArrowsSort } from '@tabler/icons-react';
 
 interface ActionButton {
   label: string;
@@ -72,6 +72,11 @@ interface DynamicGridProps {
     withTableBorder?: boolean; 
     withColumnBorders?: boolean;
   };
+  footerSettings?: {
+    enabled: boolean;
+    endpoint: string;
+    style?: React.CSSProperties;
+  };
 }
 
 export default function DynamicGrid({
@@ -91,6 +96,10 @@ export default function DynamicGrid({
     withTableBorder: true,
     withColumnBorders: true
   },
+  footerSettings = {
+    enabled: false,
+    endpoint: '',
+  },
 }: DynamicGridProps) {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -104,6 +113,8 @@ export default function DynamicGrid({
     value: any;
   } | null>(null);
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
+  const [footerData, setFooterData] = useState<any>(null);
+  const [footerLoading, setFooterLoading] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -140,7 +151,7 @@ export default function DynamicGrid({
       const result = await response.json();
       
       setData(result.data);
-      setTotalPages(result.page);
+      setTotalPages(result.page || result.total_pages || 1);
   
     } catch (error) {
       console.error('Fetch error:', error);
@@ -156,8 +167,51 @@ export default function DynamicGrid({
     }
   };
 
+  const fetchFooterData = async () => {
+    if (!footerSettings?.enabled || !footerSettings.endpoint) return;
+
+    try {
+      setFooterLoading(true);
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+
+      if (tokenRequired) {
+        const token = localStorage.getItem('token');
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+      }
+
+      const params = new URLSearchParams();
+      Object.entries(queryParams).forEach(([key, value]) => {
+        params.append(key, value);
+      });
+
+      const response = await fetch(`${baseUrl}${footerSettings.endpoint}?${params.toString()}`, {
+        method: 'GET',
+        headers
+      });
+
+      const result = await response.json();
+      setFooterData(result);
+
+    } catch (error) {
+      console.error('Footer fetch error:', error);
+      setFooterData(null);
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to fetch footer data',
+        color: 'red',
+      });
+    } finally {
+      setFooterLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchData();
+    fetchFooterData();
   }, [currentPage, sortField, sortDirection, JSON.stringify(queryParams)]);
 
   const handleSort = (field: string) => {
@@ -384,8 +438,12 @@ export default function DynamicGrid({
                     >
                       <Group gap="xs">
                         <>{setting.title}</>
-                        {sortField === setting.field && (
-                          <Text>{sortDirection === 'asc' ? '↑' : '↓'}</Text>
+                        {setting.sortable && (
+                          sortField === setting.field ? (
+                            <Text>{sortDirection === 'asc' ? '↑' : '↓'}</Text>
+                          ) : (
+                            <IconArrowsSort size={14} style={{ opacity: 0.5 }} />
+                          )
                         )}
                       </Group>
                     </Table.Th>
@@ -494,6 +552,23 @@ export default function DynamicGrid({
                 </Table.Tr>
               ))}
             </Table.Tbody>
+            {footerSettings?.enabled && footerData && (
+              <Table.Tfoot>
+                <Table.Tr style={footerSettings.style}>
+                  {enableCheckbox && <Table.Td></Table.Td>}
+                  {columnSettings
+                    .filter(setting => !isMenuAction || !setting.actions)
+                    .map((setting) => (
+                      <Table.Td key={setting.field}>
+                        {footerData[setting.field] !== undefined ? 
+                          formatValue(footerData, setting) : ''
+                        }
+                      </Table.Td>
+                    ))}
+                  {isMenuAction && <Table.Td></Table.Td>}
+                </Table.Tr>
+              </Table.Tfoot>
+            )}
           </Table>
         </Box>
 
