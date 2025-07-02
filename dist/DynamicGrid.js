@@ -69,17 +69,29 @@ export default function DynamicGrid(_a) {
     } : _h, _j = _a.footerSettings, footerSettings = _j === void 0 ? {
         enabled: false,
         endpoint: '',
-    } : _j;
-    var _k = useState([]), data = _k[0], setData = _k[1];
-    var _l = useState(true), loading = _l[0], setLoading = _l[1];
-    var _m = useState(null), sortField = _m[0], setSortField = _m[1];
-    var _o = useState('asc'), sortDirection = _o[0], setSortDirection = _o[1];
-    var _p = useState(1), currentPage = _p[0], setCurrentPage = _p[1];
-    var _q = useState(1), totalPages = _q[0], setTotalPages = _q[1];
-    var _r = useState(null), editingCell = _r[0], setEditingCell = _r[1];
-    var _s = useState([]), selectedRows = _s[0], setSelectedRows = _s[1];
-    var _t = useState(null), footerData = _t[0], setFooterData = _t[1];
-    var _u = useState(false), footerLoading = _u[0], setFooterLoading = _u[1];
+    } : _j, _k = _a.enableGrouping, enableGrouping = _k === void 0 ? false : _k, _l = _a.groupSettings, groupSettings = _l === void 0 ? [] : _l;
+    var _m = useState([]), data = _m[0], setData = _m[1];
+    var _o = useState(true), loading = _o[0], setLoading = _o[1];
+    var _p = useState(null), sortField = _p[0], setSortField = _p[1];
+    var _q = useState('asc'), sortDirection = _q[0], setSortDirection = _q[1];
+    var _r = useState(1), currentPage = _r[0], setCurrentPage = _r[1];
+    var _s = useState(1), totalPages = _s[0], setTotalPages = _s[1];
+    var _t = useState(null), editingCell = _t[0], setEditingCell = _t[1];
+    var _u = useState([]), selectedRows = _u[0], setSelectedRows = _u[1];
+    var _v = useState(null), footerData = _v[0], setFooterData = _v[1];
+    var _w = useState(false), footerLoading = _w[0], setFooterLoading = _w[1];
+    // Grouping helper functions
+    var getColumnGroupInfo = function (field) {
+        if (!enableGrouping || !groupSettings)
+            return null;
+        return groupSettings.find(function (group) { return group.fields.includes(field); });
+    };
+    var isGroupedField = function (field) {
+        return getColumnGroupInfo(field) !== null;
+    };
+    var getFilteredColumns = function () {
+        return columnSettings.filter(function (setting) { return !isMenuAction || !setting.actions; });
+    };
     var fetchData = function () { return __awaiter(_this, void 0, void 0, function () {
         var headers, token, params_1, response, result, error_1;
         return __generator(this, function (_a) {
@@ -117,7 +129,7 @@ export default function DynamicGrid(_a) {
                 case 2:
                     result = _a.sent();
                     setData(result.data);
-                    setTotalPages(result.page);
+                    setTotalPages(result.page || result.total_pages || 1);
                     return [3 /*break*/, 5];
                 case 3:
                     error_1 = _a.sent();
@@ -365,8 +377,30 @@ export default function DynamicGrid(_a) {
             } },
             React.createElement(LoadingOverlay, { visible: loading }),
             React.createElement(Box, { style: { flex: 1 } },
-                React.createElement(Table, { highlightOnHover: tableSettings.highlightOnHover, withTableBorder: tableSettings.withTableBorder, withColumnBorders: tableSettings.withColumnBorders },
+                React.createElement(Table, { highlightOnHover: tableSettings.highlightOnHover, withTableBorder: tableSettings.withTableBorder, withColumnBorders: tableSettings.withColumnBorders, stickyHeader: tableSettings.stickyHeader, stickyHeaderOffset: tableSettings.stickyHeaderOffset },
                     React.createElement(Table.Thead, null,
+                        enableGrouping && groupSettings && groupSettings.length > 0 && (React.createElement(Table.Tr, null,
+                            enableCheckbox && React.createElement(Table.Th, null),
+                            (function () {
+                                var filteredColumns = getFilteredColumns();
+                                var renderedGroups = new Set();
+                                var elements = [];
+                                for (var i = 0; i < filteredColumns.length; i++) {
+                                    var setting = filteredColumns[i];
+                                    var groupInfo = getColumnGroupInfo(setting.field);
+                                    if (groupInfo && !renderedGroups.has(groupInfo.id)) {
+                                        // Grup başlığı
+                                        renderedGroups.add(groupInfo.id);
+                                        elements.push(React.createElement(Table.Th, { key: groupInfo.id, colSpan: groupInfo.fields.length, style: __assign({ textAlign: 'center' }, groupInfo.style) }, groupInfo.title));
+                                    }
+                                    else if (!groupInfo) {
+                                        // Gruplanmayan sütun için boş hücre
+                                        elements.push(React.createElement(Table.Th, { key: setting.field }));
+                                    }
+                                }
+                                return elements;
+                            })(),
+                            isMenuAction && React.createElement(Table.Th, null))),
                         React.createElement(Table.Tr, null,
                             enableCheckbox && (React.createElement(Table.Th, { style: { width: '40px' } },
                                 React.createElement(Checkbox, { checked: selectedRows.length === data.length, indeterminate: selectedRows.length > 0 && selectedRows.length < data.length, onChange: function (e) {
@@ -374,9 +408,7 @@ export default function DynamicGrid(_a) {
                                         setSelectedRows(newSelectedRows);
                                         onRowSelected === null || onRowSelected === void 0 ? void 0 : onRowSelected(newSelectedRows);
                                     } }))),
-                            columnSettings
-                                .filter(function (setting) { return !isMenuAction || !setting.actions; })
-                                .map(function (setting) { return (React.createElement(Table.Th, { key: setting.field, onClick: function () {
+                            getFilteredColumns().map(function (setting) { return (React.createElement(Table.Th, { key: setting.field, onClick: function () {
                                     return setting.sortable ? handleSort(setting.field) : undefined;
                                 }, style: {
                                     cursor: setting.sortable ? 'pointer' : 'default',

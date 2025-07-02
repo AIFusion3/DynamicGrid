@@ -16,6 +16,12 @@ interface ChipCondition {
     trueLabel?: string;
     falseLabel?: string;
 }
+export interface ColumnGroup {
+    id: string;
+    title: string;
+    fields: string[];
+    style?: React.CSSProperties;
+}
 export interface ColumnSetting {
     field: string;
     title: string;
@@ -48,12 +54,16 @@ interface DynamicGridProps {
         highlightOnHover?: boolean;
         withTableBorder?: boolean;
         withColumnBorders?: boolean;
+        stickyHeader?: boolean;
+        stickyHeaderOffset?: number;
     };
     footerSettings?: {
         enabled: boolean;
         endpoint: string;
         style?: React.CSSProperties;
     };
+    enableGrouping?: boolean;
+    groupSettings?: ColumnGroup[];
 }
-export default function DynamicGrid({ baseUrl, endpoint, columnSettings, enableEdit, enableCheckbox, tokenRequired, pageSize, queryParams, onRowAction, onRowSelected, isMenuAction, tableSettings, footerSettings, }: DynamicGridProps): React.JSX.Element;
+export default function DynamicGrid({ baseUrl, endpoint, columnSettings, enableEdit, enableCheckbox, tokenRequired, pageSize, queryParams, onRowAction, onRowSelected, isMenuAction, tableSettings, footerSettings, enableGrouping, groupSettings, }: DynamicGridProps): React.JSX.Element;
 export {};

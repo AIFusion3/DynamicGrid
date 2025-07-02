@@ -118,7 +118,9 @@ const MyComponent = () => {
       tableSettings={{
         highlightOnHover: true,
         withTableBorder: true,
-        withColumnBorders: true
+        withColumnBorders: true,
+        stickyHeader: true,
+        stickyHeaderOffset: 60
       }}
       queryParams={{
         status: 'active'
@@ -142,8 +144,42 @@ const MyComponent = () => {
 | queryParams | object | {} | Query parameters to add to API call |
 | onRowAction | function | - | Callback function triggered when an action button/menu item is clicked. Returns action name and row data |
 | onRowSelected | function | - | Callback function triggered when rows are selected/unselected. Returns array of selected rows when enableCheckbox is true |
-| tableSettings | object | - | Table appearance settings |
+| tableSettings | object | - | Table appearance and behavior settings |
 | isMenuAction | boolean | false | When true, action buttons are displayed in a dropdown menu instead of buttons |
+
+## ⚙️ Table Settings
+
+```typescript
+interface TableSettings {
+  highlightOnHover?: boolean;      // Satırların üzerine gelindiğinde vurgulanması
+  withTableBorder?: boolean;       // Tablo dış çerçevesi
+  withColumnBorders?: boolean;     // Sütun arası çizgiler
+  stickyHeader?: boolean;          // Başlık satırlarının sabit kalması
+  stickyHeaderOffset?: number;     // Sabit başlığın üstten uzaklığı (px)
+}
+```
+
+### Table Settings Kullanımı
+
+```tsx
+<DynamicGrid
+  // ... diğer props
+  tableSettings={{
+    highlightOnHover: true,        // Satır vurgulama aktif
+    withTableBorder: true,         // Dış çerçeve var
+    withColumnBorders: false,      // Sütun çizgileri yok
+    stickyHeader: true,            // Başlık sabit
+    stickyHeaderOffset: 60         // Navbar için 60px boşluk
+  }}
+/>
+```
+
+### Sticky Header Özellikleri
+
+- **Uzun Tablolar**: Scroll sırasında başlık satırları görünür kalır
+- **Navbar Uyumluluğu**: `stickyHeaderOffset` ile sabit navbar'lar için boşluk ayarlanabilir
+- **Grup Başlıkları**: Column grouping aktifse grup başlıkları da sabit kalır
+- **Responsive**: Mobil cihazlarda da düzgün çalışır
 
 ## 📝 Column Settings
 
@@ -418,7 +454,9 @@ export default function Home() {
         tableSettings={{
           highlightOnHover: false,
           withTableBorder: true,
-          withColumnBorders: false
+          withColumnBorders: false,
+          stickyHeader: true,
+          stickyHeaderOffset: 60
         }}
         onRowAction={(action, rowData) => {
           console.log(action, rowData);
@@ -470,5 +508,118 @@ MIT
 - **image**: Image display
 - **link**: Clickable link
 - **chip**: Colored badge/chip
+
+## 📊 Column Grouping (Sütun Gruplama)
+
+DynamicGrid'e sütunları mantıklı gruplar halinde organize edebilme özelliği eklenmiştir. Bu özellik, ilişkili sütunları tek bir üst başlık altında toplayarak tablonun daha okunabilir olmasını sağlar.
+
+### Column Grouping Kullanımı
+
+```tsx
+import DynamicGrid, { ColumnSetting, ColumnGroup } from 'dynamic-grid';
+
+const columnSettings = [
+  { field: 'name', title: 'Ürün Adı', sortable: true },
+  { field: 'price', title: 'Fiyat', displayType: 'money', sortable: true },
+  { field: 'sellCount', title: 'Satış Adedi', displayType: 'number', sortable: true },
+  { field: 'stock', title: 'Stok', displayType: 'number', sortable: true },
+  { field: 'category', title: 'Kategori', sortable: true }
+];
+
+const groupSettings = [
+  {
+    id: 'salesData',
+    title: 'Satış Verileri',
+    fields: ['price', 'sellCount'],
+    style: { 
+      backgroundColor: '#e3f2fd',
+      fontWeight: 'bold',
+      color: '#1976d2'
+    }
+  },
+  {
+    id: 'inventory',
+    title: 'Envanter',
+    fields: ['stock'],
+    style: { 
+      backgroundColor: '#f3e5f5',
+      fontWeight: 'bold',
+      color: '#7b1fa2'
+    }
+  }
+];
+
+<DynamicGrid
+  enableGrouping={true}
+  groupSettings={groupSettings}
+  columnSettings={columnSettings}
+  baseUrl="https://api.example.com"
+  endpoint="/products"
+  // ... diğer props
+/>
+```
+
+### Column Group Interface
+
+```typescript
+interface ColumnGroup {
+  id: string;                    // Grup için benzersiz kimlik
+  title: string;                 // Grup başlığında gösterilecek metin
+  fields: string[];              // Bu gruba dahil edilecek field'lar
+  style?: React.CSSProperties;   // Grup başlığına uygulanacak CSS stilleri
+}
+```
+
+### Grouping Props
+
+```typescript
+enableGrouping?: boolean;        // Sütun gruplama özelliğini aktif/pasif yapar
+groupSettings?: ColumnGroup[];   // Grup tanımlarının listesi
+```
+
+### Grup Özellikleri
+
+- **Esnek Gruplama**: İstediğiniz sütunları istediğiniz gruplar altında toplayabilirsiniz
+- **Stil Özelleştirme**: Her grup başlığına özel CSS stilleri uygulayabilirsiniz
+- **Karışık Yapı**: Bazı sütunlar gruplu, bazıları tek başına olabilir
+- **Geriye Uyumluluk**: `enableGrouping=false` iken normal tablo görünümü korunur
+- **Sıralama Desteği**: Gruplanmış sütunlarda sıralama özellikleri çalışmaya devam eder
+
+### HTML Yapısı
+
+Column grouping aktif olduğunda tablo şu yapıya sahip olur:
+
+```html
+<thead>
+  <!-- Grup başlıkları satırı -->
+  <tr>
+    <th></th>                           <!-- Gruplanmayan sütunlar için boş -->
+    <th colspan="2">Satış Verileri</th>  <!-- Grup başlığı 2 sütuna yayılır -->
+    <th>Envanter</th>                   <!-- Tek sütunlu grup -->
+    <th></th>                           <!-- Gruplanmayan sütun için boş -->
+  </tr>
+  
+  <!-- Normal sütun başlıkları satırı -->
+  <tr>
+    <th>Ürün Adı</th>
+    <th>Fiyat</th>
+    <th>Satış Adedi</th>
+    <th>Stok</th>
+    <th>Kategori</th>
+  </tr>
+</thead>
+```
+
+### Kullanım Senaryoları
+
+- **E-ticaret**: Ürün bilgileri, fiyat bilgileri, stok bilgileri
+- **Finansal Raporlar**: Gelir verileri, gider verileri, kar/zarar
+- **Personel Yönetimi**: Kişisel bilgiler, iletişim bilgileri, maaş bilgileri
+- **Proje Yönetimi**: Proje detayları, zaman bilgileri, kaynak bilgileri
+- **Müşteri Analizi**: Demografik bilgiler, satış verileri, davranış verileri
+
+## 🔐 Token Usage
+
+When `tokenRequired` is set to true, the component reads the 'token' key from localStorage and adds it as a Bearer token to API requests.
 
  

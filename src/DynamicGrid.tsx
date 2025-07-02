@@ -38,6 +38,13 @@ interface ChipCondition {
   falseLabel?: string;
 }
 
+export interface ColumnGroup {
+  id: string;
+  title: string;
+  fields: string[];
+  style?: React.CSSProperties;
+}
+
 export interface ColumnSetting {
   field: string;
   title: string;
@@ -71,12 +78,16 @@ interface DynamicGridProps {
     highlightOnHover?: boolean;
     withTableBorder?: boolean; 
     withColumnBorders?: boolean;
+    stickyHeader?: boolean;
+    stickyHeaderOffset?: number;
   };
   footerSettings?: {
     enabled: boolean;
     endpoint: string;
     style?: React.CSSProperties;
   };
+  enableGrouping?: boolean;
+  groupSettings?: ColumnGroup[];
 }
 
 export default function DynamicGrid({
@@ -100,6 +111,8 @@ export default function DynamicGrid({
     enabled: false,
     endpoint: '',
   },
+  enableGrouping = false,
+  groupSettings = [],
 }: DynamicGridProps) {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -115,6 +128,20 @@ export default function DynamicGrid({
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const [footerData, setFooterData] = useState<any>(null);
   const [footerLoading, setFooterLoading] = useState(false);
+
+  // Grouping helper functions
+  const getColumnGroupInfo = (field: string) => {
+    if (!enableGrouping || !groupSettings) return null;
+    return groupSettings.find(group => group.fields.includes(field));
+  };
+
+  const isGroupedField = (field: string) => {
+    return getColumnGroupInfo(field) !== null;
+  };
+
+  const getFilteredColumns = () => {
+    return columnSettings.filter(setting => !isMenuAction || !setting.actions);
+  };
 
   const fetchData = async () => {
     try {
@@ -407,8 +434,51 @@ export default function DynamicGrid({
             highlightOnHover={tableSettings.highlightOnHover}
             withTableBorder={tableSettings.withTableBorder}
             withColumnBorders={tableSettings.withColumnBorders}
+            stickyHeader={tableSettings.stickyHeader}
+            stickyHeaderOffset={tableSettings.stickyHeaderOffset}
           >
             <Table.Thead>
+              {enableGrouping && groupSettings && groupSettings.length > 0 && (
+                <Table.Tr>
+                  {enableCheckbox && <Table.Th></Table.Th>}
+                  {(() => {
+                    const filteredColumns = getFilteredColumns();
+                    const renderedGroups = new Set();
+                    const elements = [];
+                    
+                    for (let i = 0; i < filteredColumns.length; i++) {
+                      const setting = filteredColumns[i];
+                      const groupInfo = getColumnGroupInfo(setting.field);
+                      
+                      if (groupInfo && !renderedGroups.has(groupInfo.id)) {
+                        // Grup başlığı
+                        renderedGroups.add(groupInfo.id);
+                        elements.push(
+                          <Table.Th
+                            key={groupInfo.id}
+                            colSpan={groupInfo.fields.length}
+                            style={{ 
+                              textAlign: 'center',
+                              ...groupInfo.style
+                            }}
+                          >
+                            {groupInfo.title}
+                          </Table.Th>
+                        );
+                      } else if (!groupInfo) {
+                        // Gruplanmayan sütun için boş hücre
+                        elements.push(
+                          <Table.Th key={setting.field}></Table.Th>
+                        );
+                      }
+                    }
+                    
+                    return elements;
+                  })()}
+                  {isMenuAction && <Table.Th></Table.Th>}
+                </Table.Tr>
+              )}
+              
               <Table.Tr>
                 {enableCheckbox && (
                   <Table.Th style={{ width: '40px' }}>
@@ -423,31 +493,29 @@ export default function DynamicGrid({
                     />
                   </Table.Th>
                 )}
-                {columnSettings
-                  .filter(setting => !isMenuAction || !setting.actions)
-                  .map((setting) => (
-                    <Table.Th
-                      key={setting.field}
-                      onClick={() =>
-                        setting.sortable ? handleSort(setting.field) : undefined
-                      }
-                      style={{ 
-                        cursor: setting.sortable ? 'pointer' : 'default',
-                        width: setting.width || 'auto'
-                      }}
-                    >
-                      <Group gap="xs">
-                        <>{setting.title}</>
-                        {setting.sortable && (
-                          sortField === setting.field ? (
-                            <Text>{sortDirection === 'asc' ? '↑' : '↓'}</Text>
-                          ) : (
-                            <IconArrowsSort size={14} style={{ opacity: 0.5 }} />
-                          )
-                        )}
-                      </Group>
-                    </Table.Th>
-                  ))}
+                {getFilteredColumns().map((setting) => (
+                  <Table.Th
+                    key={setting.field}
+                    onClick={() =>
+                      setting.sortable ? handleSort(setting.field) : undefined
+                    }
+                    style={{ 
+                      cursor: setting.sortable ? 'pointer' : 'default',
+                      width: setting.width || 'auto'
+                    }}
+                  >
+                    <Group gap="xs">
+                      <>{setting.title}</>
+                      {setting.sortable && (
+                        sortField === setting.field ? (
+                          <Text>{sortDirection === 'asc' ? '↑' : '↓'}</Text>
+                        ) : (
+                          <IconArrowsSort size={14} style={{ opacity: 0.5 }} />
+                        )
+                      )}
+                    </Group>
+                  </Table.Th>
+                ))}
                 {isMenuAction && <Table.Th style={{ width: '50px' }}></Table.Th>}
               </Table.Tr>
             </Table.Thead>
