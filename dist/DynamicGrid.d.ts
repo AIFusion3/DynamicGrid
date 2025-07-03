@@ -25,6 +25,7 @@ export interface ColumnGroup {
 export interface ColumnSetting {
     field: string;
     title: string;
+    description?: string;
     width?: string | number;
     sortable?: boolean;
     editable?: boolean;

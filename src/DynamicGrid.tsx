@@ -48,6 +48,7 @@ export interface ColumnGroup {
 export interface ColumnSetting {
   field: string;
   title: string;
+  description?: string;
   width?: string | number;
   sortable?: boolean;
   editable?: boolean;
@@ -468,7 +469,13 @@ export default function DynamicGrid({
                       } else if (!groupInfo) {
                         // Gruplanmayan sütun için boş hücre
                         elements.push(
-                          <Table.Th key={setting.field}></Table.Th>
+                          <Table.Th 
+                            key={setting.field}
+                            title={setting.description}
+                            style={{ 
+                              cursor: setting.description ? 'pointer' : 'default'
+                            }}
+                          ></Table.Th>
                         );
                       }
                     }
@@ -494,27 +501,28 @@ export default function DynamicGrid({
                   </Table.Th>
                 )}
                 {getFilteredColumns().map((setting) => (
-                  <Table.Th
-                    key={setting.field}
-                    onClick={() =>
-                      setting.sortable ? handleSort(setting.field) : undefined
-                    }
-                    style={{ 
-                      cursor: setting.sortable ? 'pointer' : 'default',
-                      width: setting.width || 'auto'
-                    }}
-                  >
-                    <Group gap="xs">
-                      <>{setting.title}</>
-                      {setting.sortable && (
-                        sortField === setting.field ? (
-                          <Text>{sortDirection === 'asc' ? '↑' : '↓'}</Text>
-                        ) : (
-                          <IconArrowsSort size={14} style={{ opacity: 0.5 }} />
-                        )
-                      )}
-                    </Group>
-                  </Table.Th>
+                                      <Table.Th
+                      key={setting.field}
+                      onClick={() =>
+                        setting.sortable ? handleSort(setting.field) : undefined
+                      }
+                      title={setting.description}
+                      style={{ 
+                        cursor: (setting.description || setting.sortable) ? 'pointer' : 'default',
+                        width: setting.width || 'auto'
+                      }}
+                    >
+                      <Group gap="xs">
+                        <>{setting.title}</>
+                        {setting.sortable && (
+                          sortField === setting.field ? (
+                            <Text>{sortDirection === 'asc' ? '↑' : '↓'}</Text>
+                          ) : (
+                            <IconArrowsSort size={14} style={{ opacity: 0.5 }} />
+                          )
+                        )}
+                      </Group>
+                    </Table.Th>
                 ))}
                 {isMenuAction && <Table.Th style={{ width: '50px' }}></Table.Th>}
               </Table.Tr>
