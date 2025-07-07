@@ -71,6 +71,7 @@ interface DynamicGridProps {
   enableCheckbox?: boolean;
   tokenRequired?: boolean;
   pageSize?: number;
+  enablePagination?: boolean;
   queryParams?: Record<string, string>;
   onRowAction?: (actionName: string, rowData: any) => void;
   onRowSelected?: (selectedRows: any[]) => void;
@@ -99,6 +100,7 @@ export default function DynamicGrid({
   enableCheckbox = false,
   tokenRequired = false,
   pageSize = 10,
+  enablePagination = true,
   queryParams = {},
   onRowAction,
   onRowSelected,
@@ -159,8 +161,10 @@ export default function DynamicGrid({
       }
   
       const params = new URLSearchParams();
-      params.append('page', currentPage.toString());
-      params.append('page_size', pageSize.toString());
+      if (enablePagination) {
+        params.append('page', currentPage.toString());
+        params.append('page_size', pageSize.toString());
+      }
       
       if (sortField) {
         params.append('sort_field', sortField);
@@ -501,7 +505,7 @@ export default function DynamicGrid({
                   </Table.Th>
                 )}
                 {getFilteredColumns().map((setting) => (
-                                      <Table.Th
+                    <Table.Th
                       key={setting.field}
                       onClick={() =>
                         setting.sortable ? handleSort(setting.field) : undefined
@@ -516,14 +520,14 @@ export default function DynamicGrid({
                         <>{setting.title}</>
                         {setting.sortable && (
                           sortField === setting.field ? (
-                            <Text>{sortDirection === 'asc' ? '↑' : '↓'}</Text>
+                          <Text>{sortDirection === 'asc' ? '↑' : '↓'}</Text>
                           ) : (
                             <IconArrowsSort size={14} style={{ opacity: 0.5 }} />
                           )
                         )}
                       </Group>
                     </Table.Th>
-                ))}
+                  ))}
                 {isMenuAction && <Table.Th style={{ width: '50px' }}></Table.Th>}
               </Table.Tr>
             </Table.Thead>
@@ -648,13 +652,15 @@ export default function DynamicGrid({
           </Table>
         </Box>
 
-        <Group justify="center" mt="md" mb="md">
-          <Pagination
-            value={currentPage}
-            onChange={setCurrentPage}
-            total={totalPages}
-          />
-        </Group>
+        {enablePagination && (
+          <Group justify="center" mt="md" mb="md">
+            <Pagination
+              value={currentPage}
+              onChange={setCurrentPage}
+              total={totalPages}
+            />
+          </Group>
+        )}
       </Box>
     </MantineProvider>
   );

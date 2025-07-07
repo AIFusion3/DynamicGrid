@@ -62,24 +62,24 @@ import React from 'react';
 import { IconCheck, IconX, IconDotsVertical, IconArrowsSort } from '@tabler/icons-react';
 export default function DynamicGrid(_a) {
     var _this = this;
-    var baseUrl = _a.baseUrl, endpoint = _a.endpoint, columnSettings = _a.columnSettings, _b = _a.enableEdit, enableEdit = _b === void 0 ? false : _b, _c = _a.enableCheckbox, enableCheckbox = _c === void 0 ? false : _c, _d = _a.tokenRequired, tokenRequired = _d === void 0 ? false : _d, _e = _a.pageSize, pageSize = _e === void 0 ? 10 : _e, _f = _a.queryParams, queryParams = _f === void 0 ? {} : _f, onRowAction = _a.onRowAction, onRowSelected = _a.onRowSelected, _g = _a.isMenuAction, isMenuAction = _g === void 0 ? false : _g, _h = _a.tableSettings, tableSettings = _h === void 0 ? {
+    var baseUrl = _a.baseUrl, endpoint = _a.endpoint, columnSettings = _a.columnSettings, _b = _a.enableEdit, enableEdit = _b === void 0 ? false : _b, _c = _a.enableCheckbox, enableCheckbox = _c === void 0 ? false : _c, _d = _a.tokenRequired, tokenRequired = _d === void 0 ? false : _d, _e = _a.pageSize, pageSize = _e === void 0 ? 10 : _e, _f = _a.enablePagination, enablePagination = _f === void 0 ? true : _f, _g = _a.queryParams, queryParams = _g === void 0 ? {} : _g, onRowAction = _a.onRowAction, onRowSelected = _a.onRowSelected, _h = _a.isMenuAction, isMenuAction = _h === void 0 ? false : _h, _j = _a.tableSettings, tableSettings = _j === void 0 ? {
         highlightOnHover: true,
         withTableBorder: true,
         withColumnBorders: true
-    } : _h, _j = _a.footerSettings, footerSettings = _j === void 0 ? {
+    } : _j, _k = _a.footerSettings, footerSettings = _k === void 0 ? {
         enabled: false,
         endpoint: '',
-    } : _j, _k = _a.enableGrouping, enableGrouping = _k === void 0 ? false : _k, _l = _a.groupSettings, groupSettings = _l === void 0 ? [] : _l;
-    var _m = useState([]), data = _m[0], setData = _m[1];
-    var _o = useState(true), loading = _o[0], setLoading = _o[1];
-    var _p = useState(null), sortField = _p[0], setSortField = _p[1];
-    var _q = useState('asc'), sortDirection = _q[0], setSortDirection = _q[1];
-    var _r = useState(1), currentPage = _r[0], setCurrentPage = _r[1];
-    var _s = useState(1), totalPages = _s[0], setTotalPages = _s[1];
-    var _t = useState(null), editingCell = _t[0], setEditingCell = _t[1];
-    var _u = useState([]), selectedRows = _u[0], setSelectedRows = _u[1];
-    var _v = useState(null), footerData = _v[0], setFooterData = _v[1];
-    var _w = useState(false), footerLoading = _w[0], setFooterLoading = _w[1];
+    } : _k, _l = _a.enableGrouping, enableGrouping = _l === void 0 ? false : _l, _m = _a.groupSettings, groupSettings = _m === void 0 ? [] : _m;
+    var _o = useState([]), data = _o[0], setData = _o[1];
+    var _p = useState(true), loading = _p[0], setLoading = _p[1];
+    var _q = useState(null), sortField = _q[0], setSortField = _q[1];
+    var _r = useState('asc'), sortDirection = _r[0], setSortDirection = _r[1];
+    var _s = useState(1), currentPage = _s[0], setCurrentPage = _s[1];
+    var _t = useState(1), totalPages = _t[0], setTotalPages = _t[1];
+    var _u = useState(null), editingCell = _u[0], setEditingCell = _u[1];
+    var _v = useState([]), selectedRows = _v[0], setSelectedRows = _v[1];
+    var _w = useState(null), footerData = _w[0], setFooterData = _w[1];
+    var _x = useState(false), footerLoading = _x[0], setFooterLoading = _x[1];
     // Grouping helper functions
     var getColumnGroupInfo = function (field) {
         if (!enableGrouping || !groupSettings)
@@ -109,8 +109,10 @@ export default function DynamicGrid(_a) {
                         }
                     }
                     params_1 = new URLSearchParams();
-                    params_1.append('page', currentPage.toString());
-                    params_1.append('page_size', pageSize.toString());
+                    if (enablePagination) {
+                        params_1.append('page', currentPage.toString());
+                        params_1.append('page_size', pageSize.toString());
+                    }
                     if (sortField) {
                         params_1.append('sort_field', sortField);
                         params_1.append('sort_direction', sortDirection);
@@ -453,6 +455,6 @@ export default function DynamicGrid(_a) {
                                 .map(function (setting) { return (React.createElement(Table.Td, { key: setting.field }, footerData[setting.field] !== undefined ?
                                 formatValue(footerData, setting) : '')); }),
                             isMenuAction && React.createElement(Table.Td, null)))))),
-            React.createElement(Group, { justify: "center", mt: "md", mb: "md" },
-                React.createElement(Pagination, { value: currentPage, onChange: setCurrentPage, total: totalPages })))));
+            enablePagination && (React.createElement(Group, { justify: "center", mt: "md", mb: "md" },
+                React.createElement(Pagination, { value: currentPage, onChange: setCurrentPage, total: totalPages }))))));
 }

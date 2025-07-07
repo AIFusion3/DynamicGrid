@@ -37,6 +37,7 @@ const MyComponent = () => {
     {
       field: 'name',
       title: 'Name',
+      description: 'Full name of the user',
       sortable: true,
       editable: true
     },
@@ -141,6 +142,7 @@ const MyComponent = () => {
 | enableCheckbox | boolean | false | Enables multiple selection |
 | tokenRequired | boolean | false | For APIs requiring token |
 | pageSize | number | 10 | Number of records per page |
+| enablePagination | boolean | true | Enables or disables pagination |
 | queryParams | object | {} | Query parameters to add to API call |
 | onRowAction | function | - | Callback function triggered when an action button/menu item is clicked. Returns action name and row data |
 | onRowSelected | function | - | Callback function triggered when rows are selected/unselected. Returns array of selected rows when enableCheckbox is true |
@@ -181,12 +183,54 @@ interface TableSettings {
 - **Grup Başlıkları**: Column grouping aktifse grup başlıkları da sabit kalır
 - **Responsive**: Mobil cihazlarda da düzgün çalışır
 
+## 📄 Pagination Control
+
+DynamicGrid'de pagination özelliğini açıp kapatabilirsiniz. Bu özellik, küçük veri setlerinde veya infinite scroll kullanmak istediğinizde kullanışlıdır.
+
+### Pagination Kullanımı
+
+```tsx
+// Pagination Aktif (Default)
+<DynamicGrid
+  baseUrl="https://api.example.com"
+  endpoint="/users"
+  columnSettings={columnSettings}
+  enablePagination={true}  // Default olarak true
+  pageSize={10}            // Sayfa başına 10 kayıt
+/>
+
+// Pagination Pasif - Tüm veriler tek sayfada
+<DynamicGrid
+  baseUrl="https://api.example.com"
+  endpoint="/users"
+  columnSettings={columnSettings}
+  enablePagination={false}  // Pagination kapatıldı
+  // pageSize prop'u gerek yok
+/>
+```
+
+### Pagination Özellikleri
+
+- **Default Aktif**: `enablePagination=true` (varsayılan değer)
+- **API Parametreleri**: Pagination kapalıyken `page` ve `page_size` parametreleri API'ye gönderilmez
+- **UI Kontrolü**: Pagination kapalıyken alt kısımdaki sayfa numaraları gizlenir
+- **Performans**: Pagination kapalıyken tüm veriler tek API çağrısında çekilir
+- **Esnek Kullanım**: Küçük veri setleri veya infinite scroll senaryoları için ideal
+
+### Kullanım Senaryoları
+
+- **Küçük Veri Setleri**: 50-100 kayıtlık listeler için pagination gereksiz olabilir
+- **Infinite Scroll**: Kendi scroll mantığınızı implement etmek istiyorsanız
+- **Export İşlemleri**: Tüm verileri tek seferde çekmek gerektiğinde
+- **Dashboard Widgets**: Özet tablolar için sayfalama gereksiz
+
 ## 📝 Column Settings
 
 ```typescript
 interface ColumnSetting {
   field: string;                // Data field
   title: string;               // Column header
+  description?: string;        // Column tooltip description
   width?: string | number;     // Column width
   sortable?: boolean;          // Sortable
   editable?: boolean;          // Editable
