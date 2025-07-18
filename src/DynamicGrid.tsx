@@ -510,27 +510,27 @@ export default function DynamicGrid({
                     )}
                     {getFilteredColumns().map((setting) => (
                         <Table.Th
-                          key={setting.field}
-                          onClick={() =>
-                            setting.sortable ? handleSort(setting.field) : undefined
-                          }
-                          title={setting.description}
-                          style={{ 
-                            cursor: (setting.description || setting.sortable) ? 'pointer' : 'default',
-                            width: setting.width || 'auto'
-                          }}
-                        >
-                          <Group gap="xs" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: 'var(--mantine-spacing-xs)' }} >
-                            <>{setting.title}</>
-                            {setting.sortable && (
-                              sortField === setting.field ? (
-                              <Text>{sortDirection === 'asc' ? '↑' : '↓'}</Text>
-                              ) : (
-                                <IconArrowsSort style={{ opacity: 0.5, width: '16px !important', height: '16px !important', flexShrink: '0 !important', minWidth: '16px !important', minHeight: '16px !important' }} />
-                              )
-                            )}
-                          </Group>
-                        </Table.Th>
+                        key={setting.field}
+                        onClick={() =>
+                          setting.sortable ? handleSort(setting.field) : undefined
+                        }
+                        title={setting.description}
+                        style={{ 
+                          cursor: (setting.description || setting.sortable) ? 'default' : 'default',
+                          width: setting.width || 'auto'
+                        }}
+                      >
+                         <Group gap="xs" style={{ flexWrap: 'nowrap' }} >
+                          <>{setting.title}</>
+                          {setting.sortable && (
+                            sortField === setting.field ? (
+                            <Text>{sortDirection === 'asc' ? '↑' : '↓'}</Text>
+                            ) : (
+                              <IconArrowsSort size={16} style={{ opacity: 0.5, width: '16px', height: '16px' }} />
+                            )
+                          )}
+                        </Group>
+                      </Table.Th>
                       ))}
                     {isMenuAction && <Table.Th style={{ width: '50px' }}></Table.Th>}
                   </Table.Tr>
