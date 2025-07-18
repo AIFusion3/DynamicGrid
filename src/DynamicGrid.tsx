@@ -516,7 +516,7 @@ export default function DynamicGrid({
                         }
                         title={setting.description}
                         style={{
-                          cursor: (setting.description || setting.sortable) ? 'default' : 'default',
+                          cursor: 'default',
                           width: setting.width || 'auto',
                           minWidth: setting.width || 'auto',
                           maxWidth: setting.width || 'auto'
@@ -526,14 +526,19 @@ export default function DynamicGrid({
                           gap="xs"
                           wrap="nowrap"
                           justify="space-between"
+                          align="flex-start"
                         >
                           <Text
-                            truncate
                             fw={600}
                             size="sm"
                             c="black"
                             style={{
                               letterSpacing: '0.5px',
+                              fontSize: '12px',
+                              whiteSpace: 'normal',
+                              wordBreak: 'break-word',
+                              lineHeight: 1.2,
+                              flex: 1
                             }}
                           >
                             {setting.title}
@@ -545,7 +550,8 @@ export default function DynamicGrid({
                                 fw={700}
                                 style={{
                                   minWidth: '16px',
-                                  color: 'var(--mantine-primary-color-6)'
+                                  color: 'var(--mantine-primary-color-6)',
+                                  flexShrink: 0
                                 }}
                               >
                                 {sortDirection === 'asc' ? '↑' : '↓'}

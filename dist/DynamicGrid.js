@@ -415,18 +415,24 @@ export default function DynamicGrid(_a) {
                             getFilteredColumns().map(function (setting) { return (React.createElement(Table.Th, { key: setting.field, onClick: function () {
                                     return setting.sortable ? handleSort(setting.field) : undefined;
                                 }, title: setting.description, style: {
-                                    cursor: (setting.description || setting.sortable) ? 'default' : 'default',
+                                    cursor: 'default',
                                     width: setting.width || 'auto',
                                     minWidth: setting.width || 'auto',
                                     maxWidth: setting.width || 'auto'
                                 } },
-                                React.createElement(Group, { gap: "xs", wrap: "nowrap", justify: "space-between" },
-                                    React.createElement(Text, { truncate: true, fw: 600, size: "sm", c: "black", style: {
+                                React.createElement(Group, { gap: "xs", wrap: "nowrap", justify: "space-between", align: "flex-start" },
+                                    React.createElement(Text, { fw: 600, size: "sm", c: "black", style: {
                                             letterSpacing: '0.5px',
+                                            fontSize: '12px',
+                                            whiteSpace: 'normal',
+                                            wordBreak: 'break-word',
+                                            lineHeight: 1.2,
+                                            flex: 1
                                         } }, setting.title),
                                     setting.sortable && (sortField === setting.field ? (React.createElement(Text, { size: "sm", fw: 700, style: {
                                             minWidth: '16px',
-                                            color: 'var(--mantine-primary-color-6)'
+                                            color: 'var(--mantine-primary-color-6)',
+                                            flexShrink: 0
                                         } }, sortDirection === 'asc' ? '↑' : '↓')) : (React.createElement(IconArrowsSort, { size: 16, style: {
                                             opacity: 0.5,
                                             minWidth: '16px',
