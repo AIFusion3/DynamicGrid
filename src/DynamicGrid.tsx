@@ -544,8 +544,7 @@ export default function DynamicGrid({
                                 size="sm"
                                 fw={700}
                                 style={{
-                                  minWidth: '16px',
-                                  color: 'var(--mantine-primary-color-6)' // aktif renk
+                                  minWidth: '16px'
                                 }}
                               >
                                 {sortDirection === 'asc' ? '↑' : '↓'}

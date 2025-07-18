@@ -425,8 +425,7 @@ export default function DynamicGrid(_a) {
                                             fontSize: '12px'
                                         } }, setting.title),
                                     setting.sortable && (sortField === setting.field ? (React.createElement(Text, { size: "sm", fw: 700, style: {
-                                            minWidth: '16px',
-                                            color: 'var(--mantine-primary-color-6)' // aktif renk
+                                            minWidth: '16px'
                                         } }, sortDirection === 'asc' ? '↑' : '↓')) : (React.createElement(IconArrowsSort, { size: 16, style: {
                                             opacity: 0.5,
                                             minWidth: '16px',
