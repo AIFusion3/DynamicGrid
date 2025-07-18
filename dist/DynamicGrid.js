@@ -490,7 +490,7 @@ export default function DynamicGrid(_a) {
                         getFilteredColumns().map(function (setting) { return (React.createElement(Table.Th, { key: setting.field, onClick: function () {
                                 return setting.sortable ? handleSort(setting.field) : undefined;
                             }, title: setting.description, style: {
-                                cursor: (setting.description || setting.sortable) ? 'pointer' : 'default',
+                                cursor: (setting.description || setting.sortable) ? 'default' : 'default',
                                 width: setting.width || 'auto'
                             } },
                             React.createElement(Group, { gap: "xs", style: { flexWrap: 'nowrap' } },

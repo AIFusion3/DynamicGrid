@@ -733,7 +733,7 @@ export default function DynamicGrid({
                         }
                         title={setting.description}
                         style={{ 
-                          cursor: (setting.description || setting.sortable) ? 'pointer' : 'default',
+                          cursor: (setting.description || setting.sortable) ? 'default' : 'default',
                           width: setting.width || 'auto'
                         }}
                       >
