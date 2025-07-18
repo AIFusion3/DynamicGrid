@@ -419,15 +419,12 @@ export default function DynamicGrid(_a) {
                                     width: setting.width || 'auto'
                                 } },
                                 React.createElement(Group, { gap: "xs", wrap: "nowrap", justify: "space-between" },
-                                    React.createElement(Text, { truncate: true, fw: 600, size: "sm" // küçük font boyutu
-                                        , c: "black" // siyah renk
-                                        , style: {
-                                            letterSpacing: '0.5px', // hafif harf aralığı
-                                            fontSize: '12px' // daha spesifik boyut
+                                    React.createElement(Text, { truncate: true, fw: 600, size: "sm", c: "black", style: {
+                                            letterSpacing: '0.5px',
                                         } }, setting.title),
                                     setting.sortable && (sortField === setting.field ? (React.createElement(Text, { size: "sm", fw: 700, style: {
                                             minWidth: '16px',
-                                            color: 'var(--mantine-primary-color-6)' // aktif renk
+                                            color: 'var(--mantine-primary-color-6)'
                                         } }, sortDirection === 'asc' ? '↑' : '↓')) : (React.createElement(IconArrowsSort, { size: 16, style: {
                                             opacity: 0.5,
                                             minWidth: '16px',
