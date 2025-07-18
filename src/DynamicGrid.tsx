@@ -533,7 +533,8 @@ export default function DynamicGrid({
                             style={{
                               letterSpacing: '0.5px',
                               textTransform: 'uppercase',
-                              fontSize: '12px'
+                              fontSize: '12px',
+                              color: 'var(--mantine-color-primary-6)'
                             }}
                           >
                             {setting.title}
@@ -544,7 +545,8 @@ export default function DynamicGrid({
                                 size="sm"
                                 fw={700}
                                 style={{
-                                  minWidth: '16px'
+                                  minWidth: '16px',
+                                  color: 'var(--mantine-color-primary-6)'
                                 }}
                               >
                                 {sortDirection === 'asc' ? '↑' : '↓'}
