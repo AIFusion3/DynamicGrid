@@ -517,7 +517,9 @@ export default function DynamicGrid({
                         title={setting.description}
                         style={{
                           cursor: (setting.description || setting.sortable) ? 'default' : 'default',
-                          width: `${setting.width}px !important`
+                          width: setting.width || 'auto',
+                          minWidth: setting.width || 'auto',
+                          maxWidth: setting.width || 'auto'
                         }}
                       >
                         <Group
