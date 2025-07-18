@@ -418,11 +418,16 @@ export default function DynamicGrid(_a) {
                                     cursor: (setting.description || setting.sortable) ? 'default' : 'default',
                                     width: setting.width || 'auto'
                                 } },
-                                React.createElement(Group, { gap: "xs", wrap: "nowrap" // flexWrap yerine wrap kullan
-                                    , justify: "space-between" // veya justify="flex-start"
-                                 },
-                                    React.createElement(Text, { truncate: true }, setting.title),
-                                    setting.sortable && (sortField === setting.field ? (React.createElement(Text, { size: "sm", style: { minWidth: '16px' } }, sortDirection === 'asc' ? '↑' : '↓')) : (React.createElement(IconArrowsSort, { size: 16, style: {
+                                React.createElement(Group, { gap: "xs", wrap: "nowrap", justify: "space-between" },
+                                    React.createElement(Text, { truncate: true, fw: 600, size: "sm", c: "dimmed", style: {
+                                            letterSpacing: '0.5px',
+                                            textTransform: 'uppercase',
+                                            fontSize: '12px'
+                                        } }, setting.title),
+                                    setting.sortable && (sortField === setting.field ? (React.createElement(Text, { size: "sm", fw: 700, style: {
+                                            minWidth: '16px',
+                                            color: 'var(--mantine-primary-color-6)' // aktif renk
+                                        } }, sortDirection === 'asc' ? '↑' : '↓')) : (React.createElement(IconArrowsSort, { size: 16, style: {
                                             opacity: 0.5,
                                             minWidth: '16px',
                                             minHeight: '16px',

@@ -78,7 +78,7 @@ interface DynamicGridProps {
   isMenuAction?: boolean;
   tableSettings?: {
     highlightOnHover?: boolean;
-    withTableBorder?: boolean; 
+    withTableBorder?: boolean;
     withColumnBorders?: boolean;
     stickyHeader?: boolean;
     stickyHeaderOffset?: number;
@@ -154,20 +154,20 @@ export default function DynamicGrid({
       const headers: HeadersInit = {
         'Content-Type': 'application/json',
       };
-  
+
       if (tokenRequired) {
         const token = localStorage.getItem('token');
         if (token) {
           headers['Authorization'] = `Bearer ${token}`;
         }
       }
-  
+
       const params = new URLSearchParams();
       if (enablePagination) {
         params.append('page', currentPage.toString());
         params.append('page_size', pageSize.toString());
       }
-      
+
       if (sortField) {
         params.append('sort_field', sortField);
         params.append('sort_direction', sortDirection);
@@ -176,17 +176,17 @@ export default function DynamicGrid({
       Object.entries(queryParams).forEach(([key, value]) => {
         params.append(key, value);
       });
-  
+
       const response = await fetch(`${baseUrl}${endpoint}?${params.toString()}`, {
         method: 'GET',
         headers
       });
-  
+
       const result = await response.json();
-      
+
       setData(result.data);
       setTotalPages(result.page || result.total_pages || 1);
-  
+
     } catch (error) {
       console.error('Fetch error:', error);
       setData([]);
@@ -261,54 +261,54 @@ export default function DynamicGrid({
   const getNestedValue = (obj: any, path: string) => {
     return path.split('.').reduce((acc, part) => {
       if (!acc) return '';
-      
+
       if (Array.isArray(acc)) {
         return acc.map(item => item[part]).filter(Boolean).join(', ');
       }
-      
+
       return acc[part] !== undefined ? acc[part] : '';
     }, obj);
   };
 
   const formatValue = (row: any, setting: ColumnSetting) => {
     if (!row) return '';
-  
+
     const formatText = (text: string) => {
       try {
         const regex = /\{([^}]+)\}/g;
         const matches = text.match(regex);
-        
+
         if (!matches) return text;
-        
+
         let result = text;
         matches.forEach(match => {
           const key = match.slice(1, -1);
           result = result.replace(match, getNestedValue(row, key) || '');
         });
-        
+
         return result;
       } catch {
         return text;
       }
     };
-  
+
     if (setting.format) {
       return formatText(setting.format);
     }
-  
+
     const value = getNestedValue(row, setting.field);
-    
+
     switch (setting.displayType) {
       case 'date':
         return value ? new Date(value).toLocaleDateString('tr-TR', {
           day: '2-digit',
-          month: '2-digit', 
+          month: '2-digit',
           year: 'numeric'
         }) : '';
       case 'datetime':
         return value ? new Date(value).toLocaleString('tr-TR', {
           day: '2-digit',
-          month: '2-digit', 
+          month: '2-digit',
           year: 'numeric',
           hour: '2-digit',
           minute: '2-digit'
@@ -327,17 +327,17 @@ export default function DynamicGrid({
         return <a href={href} target={setting.target || '_self'} style={setting.linkStyle} rel="noopener noreferrer">{value}</a>;
       case 'chip':
         if (!setting.chipCondition) return value;
-        
+
         const checkField = setting.chipCondition.field || setting.field;
         const checkValue = setting.chipCondition.value ?? true;
         const isTrue = getNestedValue(row, checkField) === checkValue;
-        
-        const color = isTrue ? 
-          (setting.chipCondition.trueColor || 'green') : 
+
+        const color = isTrue ?
+          (setting.chipCondition.trueColor || 'green') :
           (setting.chipCondition.falseColor || 'red');
-        
-        const label = isTrue ? 
-          (setting.chipCondition.trueLabel || value) : 
+
+        const label = isTrue ?
+          (setting.chipCondition.trueLabel || value) :
           (setting.chipCondition.falseLabel || value);
 
         return (
@@ -416,19 +416,19 @@ export default function DynamicGrid({
   };
 
   const handleRowSelect = (row: any, checked: boolean) => {
-    const newSelectedRows = checked 
+    const newSelectedRows = checked
       ? [...selectedRows, row]
       : selectedRows.filter(r => r.id !== row.id);
-    
+
     setSelectedRows(newSelectedRows);
     onRowSelected?.(newSelectedRows);
   };
 
   return (
     <MantineProvider>
-      <Box 
-        pos="relative" 
-        style={{ 
+      <Box
+        pos="relative"
+        style={{
           display: 'flex',
           flexDirection: 'column',
           height: '100%',
@@ -439,7 +439,7 @@ export default function DynamicGrid({
         <Box style={{ flex: 1 }}>
           {(() => {
             const tableComponent = (
-              <Table 
+              <Table
                 highlightOnHover={tableSettings.highlightOnHover}
                 withTableBorder={tableSettings.withTableBorder}
                 withColumnBorders={tableSettings.withColumnBorders}
@@ -454,11 +454,11 @@ export default function DynamicGrid({
                         const filteredColumns = getFilteredColumns();
                         const renderedGroups = new Set();
                         const elements = [];
-                        
+
                         for (let i = 0; i < filteredColumns.length; i++) {
                           const setting = filteredColumns[i];
                           const groupInfo = getColumnGroupInfo(setting.field);
-                          
+
                           if (groupInfo && !renderedGroups.has(groupInfo.id)) {
                             // Grup başlığı
                             renderedGroups.add(groupInfo.id);
@@ -466,7 +466,7 @@ export default function DynamicGrid({
                               <Table.Th
                                 key={groupInfo.id}
                                 colSpan={groupInfo.fields.length}
-                                style={{ 
+                                style={{
                                   textAlign: 'center',
                                   ...groupInfo.style
                                 }}
@@ -477,23 +477,23 @@ export default function DynamicGrid({
                           } else if (!groupInfo) {
                             // Gruplanmayan sütun için boş hücre
                             elements.push(
-                              <Table.Th 
+                              <Table.Th
                                 key={setting.field}
                                 title={setting.description}
-                                style={{ 
+                                style={{
                                   cursor: setting.description ? 'pointer' : 'default'
                                 }}
                               ></Table.Th>
                             );
                           }
                         }
-                        
+
                         return elements;
                       })()}
                       {isMenuAction && <Table.Th></Table.Th>}
                     </Table.Tr>
                   )}
-                  
+
                   <Table.Tr>
                     {enableCheckbox && (
                       <Table.Th style={{ width: '40px' }}>
@@ -509,43 +509,62 @@ export default function DynamicGrid({
                       </Table.Th>
                     )}
                     {getFilteredColumns().map((setting) => (
-                        <Table.Th
+                      <Table.Th
                         key={setting.field}
                         onClick={() =>
                           setting.sortable ? handleSort(setting.field) : undefined
                         }
                         title={setting.description}
-                        style={{ 
+                        style={{
                           cursor: (setting.description || setting.sortable) ? 'default' : 'default',
                           width: setting.width || 'auto'
                         }}
                       >
-                        <Group 
-                          gap="xs" 
-                          wrap="nowrap" // flexWrap yerine wrap kullan
-                          justify="space-between" // veya justify="flex-start"
+                        <Group
+                          gap="xs"
+                          wrap="nowrap"
+                          justify="space-between"
                         >
-                          <Text truncate>{setting.title}</Text>
+                          <Text
+                            truncate
+                            fw={600}
+                            size="sm"
+                            c="dimmed"
+                            style={{
+                              letterSpacing: '0.5px',
+                              textTransform: 'uppercase',
+                              fontSize: '12px'
+                            }}
+                          >
+                            {setting.title}
+                          </Text>
                           {setting.sortable && (
                             sortField === setting.field ? (
-                              <Text size="sm" style={{ minWidth: '16px' }}>
+                              <Text
+                                size="sm"
+                                fw={700}
+                                style={{
+                                  minWidth: '16px',
+                                  color: 'var(--mantine-primary-color-6)' // aktif renk
+                                }}
+                              >
                                 {sortDirection === 'asc' ? '↑' : '↓'}
                               </Text>
                             ) : (
-                              <IconArrowsSort 
-                                size={16} 
-                                style={{ 
-                                  opacity: 0.5, 
-                                  minWidth: '16px', 
+                              <IconArrowsSort
+                                size={16}
+                                style={{
+                                  opacity: 0.5,
+                                  minWidth: '16px',
                                   minHeight: '16px',
-                                  flexShrink: 0 
-                                }} 
+                                  flexShrink: 0
+                                }}
                               />
                             )
                           )}
                         </Group>
                       </Table.Th>
-                      ))}
+                    ))}
                     {isMenuAction && <Table.Th style={{ width: '50px' }}></Table.Th>}
                   </Table.Tr>
                 </Table.Thead>
@@ -630,7 +649,7 @@ export default function DynamicGrid({
                               </ActionIcon>
                             </Menu.Target>
                             <Menu.Dropdown>
-                              {columnSettings.map(setting => 
+                              {columnSettings.map(setting =>
                                 setting.actions?.map((action, actionIndex) => (
                                   <Menu.Item
                                     key={actionIndex}
@@ -658,7 +677,7 @@ export default function DynamicGrid({
                         .filter(setting => !isMenuAction || !setting.actions)
                         .map((setting) => (
                           <Table.Td key={setting.field}>
-                            {footerData[setting.field] !== undefined ? 
+                            {footerData[setting.field] !== undefined ?
                               formatValue(footerData, setting) : ''
                             }
                           </Table.Td>
