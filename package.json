@@ -1,6 +1,6 @@
 {
   "name": "dynamic-grid",
-  "version": "1.4.21",
+  "version": "1.4.22",
   "main": "dist/DynamicGrid.js",
   "types": "dist/DynamicGrid.d.ts",
   "scripts": {

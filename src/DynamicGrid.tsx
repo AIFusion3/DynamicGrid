@@ -526,7 +526,7 @@ export default function DynamicGrid({
                               sortField === setting.field ? (
                               <Text>{sortDirection === 'asc' ? '↑' : '↓'}</Text>
                               ) : (
-                                <IconArrowsSort size={22} style={{ opacity: 0.5 }} />
+                                <IconArrowsSort size={16} style={{ opacity: 0.5, width: '16px', height: '16px' }} />
                               )
                             )}
                           </Group>
@@ -737,13 +737,13 @@ export default function DynamicGrid({
                           width: setting.width || 'auto'
                         }}
                       >
-                        <Group gap="xs">
+                         <Group gap="xs" style={{ flexWrap: 'nowrap' }} >
                           <>{setting.title}</>
                           {setting.sortable && (
                             sortField === setting.field ? (
                             <Text>{sortDirection === 'asc' ? '↑' : '↓'}</Text>
                             ) : (
-                              <IconArrowsSort size={14} style={{ opacity: 0.5 }} />
+                              <IconArrowsSort size={16} style={{ opacity: 0.5, width: '16px', height: '16px' }} />
                             )
                           )}
                         </Group>
