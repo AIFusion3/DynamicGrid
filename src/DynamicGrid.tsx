@@ -437,8 +437,8 @@ export default function DynamicGrid({
       >
         <LoadingOverlay visible={loading} />
         <Box style={{ flex: 1 }}>
-          {tableSettings.horizontalScroll && tableSettings.minWidth ? (
-            <Table.ScrollContainer minWidth={tableSettings.minWidth}>
+          {(() => {
+            const tableComponent = (
               <Table 
                 highlightOnHover={tableSettings.highlightOnHover}
                 withTableBorder={tableSettings.withTableBorder}
@@ -510,27 +510,27 @@ export default function DynamicGrid({
                     )}
                     {getFilteredColumns().map((setting) => (
                         <Table.Th
-                        key={setting.field}
-                        onClick={() =>
-                          setting.sortable ? handleSort(setting.field) : undefined
-                        }
-                        title={setting.description}
-                        style={{ 
-                          cursor: (setting.description || setting.sortable) ? 'default' : 'default',
-                          width: setting.width || 'auto'
-                        }}
-                      >
-                         <Group gap="xs" style={{ flexWrap: 'nowrap' }} >
-                          <>{setting.title}</>
-                          {setting.sortable && (
-                            sortField === setting.field ? (
-                            <Text>{sortDirection === 'asc' ? '↑' : '↓'}</Text>
-                            ) : (
-                              <IconArrowsSort size={16} style={{ opacity: 0.5, width: '16px', height: '16px' }} />
-                            )
-                          )}
-                        </Group>
-                      </Table.Th>
+                          key={setting.field}
+                          onClick={() =>
+                            setting.sortable ? handleSort(setting.field) : undefined
+                          }
+                          title={setting.description}
+                          style={{ 
+                            cursor: (setting.description || setting.sortable) ? 'default' : 'default',
+                            width: setting.width || 'auto'
+                          }}
+                        >
+                          <Group gap="xs" style={{ flexWrap: 'nowrap' }} >
+                            <>{setting.title}</>
+                            {setting.sortable && (
+                              sortField === setting.field ? (
+                              <Text>{sortDirection === 'asc' ? '↑' : '↓'}</Text>
+                              ) : (
+                                <IconArrowsSort size={16} style={{ opacity: 0.5, width: '16px', height: '16px' }} />
+                              )
+                            )}
+                          </Group>
+                        </Table.Th>
                       ))}
                     {isMenuAction && <Table.Th style={{ width: '50px' }}></Table.Th>}
                   </Table.Tr>
@@ -654,224 +654,14 @@ export default function DynamicGrid({
                   </Table.Tfoot>
                 )}
               </Table>
-            </Table.ScrollContainer>
-          ) : (
-            <Table 
-              highlightOnHover={tableSettings.highlightOnHover}
-              withTableBorder={tableSettings.withTableBorder}
-              withColumnBorders={tableSettings.withColumnBorders}
-              stickyHeader={tableSettings.stickyHeader}
-              stickyHeaderOffset={tableSettings.stickyHeaderOffset}
-            >
-              <Table.Thead>
-                {enableGrouping && groupSettings && groupSettings.length > 0 && (
-                  <Table.Tr>
-                    {enableCheckbox && <Table.Th></Table.Th>}
-                    {(() => {
-                      const filteredColumns = getFilteredColumns();
-                      const renderedGroups = new Set();
-                      const elements = [];
-                      
-                      for (let i = 0; i < filteredColumns.length; i++) {
-                        const setting = filteredColumns[i];
-                        const groupInfo = getColumnGroupInfo(setting.field);
-                        
-                        if (groupInfo && !renderedGroups.has(groupInfo.id)) {
-                          // Grup başlığı
-                          renderedGroups.add(groupInfo.id);
-                          elements.push(
-                            <Table.Th
-                              key={groupInfo.id}
-                              colSpan={groupInfo.fields.length}
-                              style={{ 
-                                textAlign: 'center',
-                                ...groupInfo.style
-                              }}
-                            >
-                              {groupInfo.title}
-                            </Table.Th>
-                          );
-                        } else if (!groupInfo) {
-                          // Gruplanmayan sütun için boş hücre
-                          elements.push(
-                            <Table.Th 
-                              key={setting.field}
-                              title={setting.description}
-                              style={{ 
-                                cursor: setting.description ? 'pointer' : 'default'
-                              }}
-                            ></Table.Th>
-                          );
-                        }
-                      }
-                      
-                      return elements;
-                    })()}
-                    {isMenuAction && <Table.Th></Table.Th>}
-                  </Table.Tr>
-                )}
-                
-                <Table.Tr>
-                  {enableCheckbox && (
-                    <Table.Th style={{ width: '40px' }}>
-                      <Checkbox
-                        checked={selectedRows.length === data.length}
-                        indeterminate={selectedRows.length > 0 && selectedRows.length < data.length}
-                        onChange={(e) => {
-                          const newSelectedRows = e.currentTarget.checked ? [...data] : [];
-                          setSelectedRows(newSelectedRows);
-                          onRowSelected?.(newSelectedRows);
-                        }}
-                      />
-                    </Table.Th>
-                  )}
-                  {getFilteredColumns().map((setting) => (
-                      <Table.Th
-                        key={setting.field}
-                        onClick={() =>
-                          setting.sortable ? handleSort(setting.field) : undefined
-                        }
-                        title={setting.description}
-                        style={{ 
-                          cursor: (setting.description || setting.sortable) ? 'default' : 'default',
-                          width: setting.width || 'auto'
-                        }}
-                      >
-                         <Group gap="xs" style={{ flexWrap: 'nowrap' }} >
-                          <>{setting.title}</>
-                          {setting.sortable && (
-                            sortField === setting.field ? (
-                            <Text>{sortDirection === 'asc' ? '↑' : '↓'}</Text>
-                            ) : (
-                              <IconArrowsSort size={16} style={{ opacity: 0.5, width: '16px', height: '16px' }} />
-                            )
-                          )}
-                        </Group>
-                      </Table.Th>
-                    ))}
-                  {isMenuAction && <Table.Th style={{ width: '50px' }}></Table.Th>}
-                </Table.Tr>
-              </Table.Thead>
-              <Table.Tbody>
-                {data.map((row, rowIndex) => (
-                  <Table.Tr key={row.id || rowIndex}>
-                    {enableCheckbox && (
-                      <Table.Td>
-                        <Checkbox
-                          checked={selectedRows.some(r => r.id === row.id)}
-                          onChange={(e) => handleRowSelect(row, e.currentTarget.checked)}
-                        />
-                      </Table.Td>
-                    )}
-                    {columnSettings
-                      .filter(setting => !isMenuAction || !setting.actions)
-                      .map((setting) => (
-                        <Table.Td
-                          key={setting.field}
-                          onDoubleClick={() =>
-                            handleCellDoubleClick(
-                              rowIndex,
-                              setting.field,
-                              row[setting.field]
-                            )
-                          }
-                        >
-                          {setting.actions && !isMenuAction ? (
-                            <Group gap="xs">
-                              {setting.actions.map((action, actionIndex) => (
-                                <Button
-                                  key={actionIndex}
-                                  size={action.size || 'xs'}
-                                  variant={action.variant || 'filled'}
-                                  disabled={action.disabled}
-                                  color={action.color}
-                                  leftSection={action.icon}
-                                  onClick={() => onRowAction?.(action.name, row)}
-                                >
-                                  {action.label}
-                                </Button>
-                              ))}
-                            </Group>
-                          ) : editingCell?.rowIndex === rowIndex &&
-                            editingCell?.field === setting.field ? (
-                            <Group>
-                              <TextInput
-                                value={editingCell.value}
-                                onChange={(e) =>
-                                  setEditingCell({
-                                    ...editingCell,
-                                    value: e.target.value,
-                                  })
-                                }
-                              />
-                              <ActionIcon
-                                color="green"
-                                variant="subtle"
-                                onClick={handleEditSave}
-                              >
-                                <IconCheck size={16} />
-                              </ActionIcon>
-                              <ActionIcon
-                                color="red"
-                                variant="subtle"
-                                onClick={() => setEditingCell(null)}
-                              >
-                                <IconX size={16} />
-                              </ActionIcon>
-                            </Group>
-                          ) : (
-                            formatValue(row, setting)
-                          )}
-                        </Table.Td>
-                      ))}
-                    {isMenuAction && (
-                      <Table.Td>
-                        <Menu>
-                          <Menu.Target>
-                            <ActionIcon variant="subtle">
-                              <IconDotsVertical size={16} />
-                            </ActionIcon>
-                          </Menu.Target>
-                          <Menu.Dropdown>
-                            {columnSettings.map(setting => 
-                              setting.actions?.map((action, actionIndex) => (
-                                <Menu.Item
-                                  key={actionIndex}
-                                  leftSection={action.icon}
-                                  disabled={action.disabled}
-                                  color={action.color}
-                                  onClick={() => onRowAction?.(action.name, row)}
-                                >
-                                  {action.label}
-                                </Menu.Item>
-                              ))
-                            )}
-                          </Menu.Dropdown>
-                        </Menu>
-                      </Table.Td>
-                    )}
-                  </Table.Tr>
-                ))}
-              </Table.Tbody>
-              {footerSettings?.enabled && footerData && (
-                <Table.Tfoot>
-                  <Table.Tr style={footerSettings.style}>
-                    {enableCheckbox && <Table.Td></Table.Td>}
-                    {columnSettings
-                      .filter(setting => !isMenuAction || !setting.actions)
-                      .map((setting) => (
-                        <Table.Td key={setting.field}>
-                          {footerData[setting.field] !== undefined ? 
-                            formatValue(footerData, setting) : ''
-                          }
-                        </Table.Td>
-                      ))}
-                    {isMenuAction && <Table.Td></Table.Td>}
-                  </Table.Tr>
-                </Table.Tfoot>
-              )}
-            </Table>
-          )}
+            );
+
+            return tableSettings.horizontalScroll && tableSettings.minWidth ? (
+              <Table.ScrollContainer minWidth={tableSettings.minWidth}>
+                {tableComponent}
+              </Table.ScrollContainer>
+            ) : tableComponent;
+          })()}
         </Box>
 
         {enablePagination && (
