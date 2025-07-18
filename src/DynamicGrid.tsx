@@ -509,61 +509,60 @@ export default function DynamicGrid({
                       </Table.Th>
                     )}
                     {getFilteredColumns().map((setting) => (
-                      <Table.Th
-                        key={setting.field}
-                        onClick={() =>
-                          setting.sortable ? handleSort(setting.field) : undefined
-                        }
-                        title={setting.description}
-                        style={{
-                          cursor: (setting.description || setting.sortable) ? 'default' : 'default',
-                          width: setting.width || 'auto'
-                        }}
-                      >
-                        <Group
-                          gap="xs"
-                          wrap="nowrap"
-                          justify="space-between"
-                        >
-                          <Text
-                            truncate
-                            fw={600}
-                            size="sm"
-                            c="dimmed"
-                            style={{
-                              letterSpacing: '0.5px',
-                              fontSize: '12px',
-                              color: '#000000'
-                            }}
-                          >
-                            {setting.title}
-                          </Text>
-                          {setting.sortable && (
-                            sortField === setting.field ? (
-                              <Text
-                                size="sm"
-                                fw={700}
-                                style={{
-                                  minWidth: '16px',
-                                  color: 'var(--mantine-color-primary-6)'
-                                }}
-                              >
-                                {sortDirection === 'asc' ? '↑' : '↓'}
-                              </Text>
-                            ) : (
-                              <IconArrowsSort
-                                size={16}
-                                style={{
-                                  opacity: 0.5,
-                                  minWidth: '16px',
-                                  minHeight: '16px',
-                                  flexShrink: 0
-                                }}
-                              />
-                            )
-                          )}
-                        </Group>
-                      </Table.Th>
+                     <Table.Th
+                     key={setting.field}
+                     onClick={() =>
+                       setting.sortable ? handleSort(setting.field) : undefined
+                     }
+                     title={setting.description}
+                     style={{ 
+                       cursor: (setting.description || setting.sortable) ? 'default' : 'default',
+                       width: setting.width || 'auto'
+                     }}
+                    >
+                     <Group 
+                       gap="xs" 
+                       wrap="nowrap"
+                       justify="space-between"
+                     >
+                       <Text 
+                         truncate
+                         fw={600} // bold yapar
+                         size="sm" // küçük font boyutu
+                         c="black" // siyah renk
+                         style={{
+                           letterSpacing: '0.5px', // hafif harf aralığı
+                           fontSize: '12px' // daha spesifik boyut
+                         }}
+                       >
+                         {setting.title}
+                       </Text>
+                       {setting.sortable && (
+                         sortField === setting.field ? (
+                           <Text 
+                             size="sm" 
+                             fw={700}
+                             style={{ 
+                               minWidth: '16px',
+                               color: 'var(--mantine-primary-color-6)' // aktif renk
+                             }}
+                           >
+                             {sortDirection === 'asc' ? '↑' : '↓'}
+                           </Text>
+                         ) : (
+                           <IconArrowsSort 
+                             size={16} 
+                             style={{ 
+                               opacity: 0.5, 
+                               minWidth: '16px', 
+                               minHeight: '16px',
+                               flexShrink: 0 
+                             }} 
+                           />
+                         )
+                       )}
+                     </Group>
+                    </Table.Th>
                     ))}
                     {isMenuAction && <Table.Th style={{ width: '50px' }}></Table.Th>}
                   </Table.Tr>
