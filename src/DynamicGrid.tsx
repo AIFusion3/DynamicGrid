@@ -520,13 +520,13 @@ export default function DynamicGrid({
                             width: setting.width || 'auto'
                           }}
                         >
-                          <Group gap="xs">
+                          <Group gap="xs" style={{ flexWrap: 'nowrap' }} >
                             <>{setting.title}</>
                             {setting.sortable && (
                               sortField === setting.field ? (
                               <Text>{sortDirection === 'asc' ? '↑' : '↓'}</Text>
                               ) : (
-                                <IconArrowsSort size={14} style={{ opacity: 0.5 }} />
+                                <IconArrowsSort size={22} style={{ opacity: 0.5 }} />
                               )
                             )}
                           </Group>
