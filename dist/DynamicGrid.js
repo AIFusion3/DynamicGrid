@@ -418,9 +418,9 @@ export default function DynamicGrid(_a) {
                                     cursor: (setting.description || setting.sortable) ? 'pointer' : 'default',
                                     width: setting.width || 'auto'
                                 } },
-                                React.createElement(Group, { gap: "xs" },
+                                React.createElement(Group, { gap: "xs", style: { flexWrap: 'nowrap' } },
                                     React.createElement(React.Fragment, null, setting.title),
-                                    setting.sortable && (sortField === setting.field ? (React.createElement(Text, null, sortDirection === 'asc' ? '↑' : '↓')) : (React.createElement(IconArrowsSort, { size: 14, style: { opacity: 0.5 } })))))); }),
+                                    setting.sortable && (sortField === setting.field ? (React.createElement(Text, null, sortDirection === 'asc' ? '↑' : '↓')) : (React.createElement(IconArrowsSort, { size: 22, style: { opacity: 0.5 } })))))); }),
                             isMenuAction && React.createElement(Table.Th, { style: { width: '50px' } }))),
                     React.createElement(Table.Tbody, null, data.map(function (row, rowIndex) { return (React.createElement(Table.Tr, { key: row.id || rowIndex },
                         enableCheckbox && (React.createElement(Table.Td, null,
