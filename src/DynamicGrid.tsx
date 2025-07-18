@@ -526,7 +526,7 @@ export default function DynamicGrid({
                               sortField === setting.field ? (
                               <Text>{sortDirection === 'asc' ? '↑' : '↓'}</Text>
                               ) : (
-                                <IconArrowsSort size={16} style={{ opacity: 0.5, width: '16px', height: '16px' }} />
+                                <IconArrowsSort size={22} style={{ opacity: 0.5, width: '22px', height: '22px' }} />
                               )
                             )}
                           </Group>
