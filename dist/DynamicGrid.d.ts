@@ -58,6 +58,8 @@ interface DynamicGridProps {
         withColumnBorders?: boolean;
         stickyHeader?: boolean;
         stickyHeaderOffset?: number;
+        horizontalScroll?: boolean;
+        minWidth?: number;
     };
     footerSettings?: {
         enabled: boolean;

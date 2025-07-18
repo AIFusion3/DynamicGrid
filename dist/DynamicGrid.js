@@ -378,7 +378,7 @@ export default function DynamicGrid(_a) {
                 minHeight: 'inherit'
             } },
             React.createElement(LoadingOverlay, { visible: loading }),
-            React.createElement(Box, { style: { flex: 1 } },
+            React.createElement(Box, { style: { flex: 1 } }, tableSettings.horizontalScroll && tableSettings.minWidth ? (React.createElement(Table.ScrollContainer, { minWidth: tableSettings.minWidth },
                 React.createElement(Table, { highlightOnHover: tableSettings.highlightOnHover, withTableBorder: tableSettings.withTableBorder, withColumnBorders: tableSettings.withColumnBorders, stickyHeader: tableSettings.stickyHeader, stickyHeaderOffset: tableSettings.stickyHeaderOffset },
                     React.createElement(Table.Thead, null,
                         enableGrouping && groupSettings && groupSettings.length > 0 && (React.createElement(Table.Tr, null,
@@ -454,7 +454,82 @@ export default function DynamicGrid(_a) {
                                 .filter(function (setting) { return !isMenuAction || !setting.actions; })
                                 .map(function (setting) { return (React.createElement(Table.Td, { key: setting.field }, footerData[setting.field] !== undefined ?
                                 formatValue(footerData, setting) : '')); }),
-                            isMenuAction && React.createElement(Table.Td, null)))))),
+                            isMenuAction && React.createElement(Table.Td, null))))))) : (React.createElement(Table, { highlightOnHover: tableSettings.highlightOnHover, withTableBorder: tableSettings.withTableBorder, withColumnBorders: tableSettings.withColumnBorders, stickyHeader: tableSettings.stickyHeader, stickyHeaderOffset: tableSettings.stickyHeaderOffset },
+                React.createElement(Table.Thead, null,
+                    enableGrouping && groupSettings && groupSettings.length > 0 && (React.createElement(Table.Tr, null,
+                        enableCheckbox && React.createElement(Table.Th, null),
+                        (function () {
+                            var filteredColumns = getFilteredColumns();
+                            var renderedGroups = new Set();
+                            var elements = [];
+                            for (var i = 0; i < filteredColumns.length; i++) {
+                                var setting = filteredColumns[i];
+                                var groupInfo = getColumnGroupInfo(setting.field);
+                                if (groupInfo && !renderedGroups.has(groupInfo.id)) {
+                                    // Grup başlığı
+                                    renderedGroups.add(groupInfo.id);
+                                    elements.push(React.createElement(Table.Th, { key: groupInfo.id, colSpan: groupInfo.fields.length, style: __assign({ textAlign: 'center' }, groupInfo.style) }, groupInfo.title));
+                                }
+                                else if (!groupInfo) {
+                                    // Gruplanmayan sütun için boş hücre
+                                    elements.push(React.createElement(Table.Th, { key: setting.field, title: setting.description, style: {
+                                            cursor: setting.description ? 'pointer' : 'default'
+                                        } }));
+                                }
+                            }
+                            return elements;
+                        })(),
+                        isMenuAction && React.createElement(Table.Th, null))),
+                    React.createElement(Table.Tr, null,
+                        enableCheckbox && (React.createElement(Table.Th, { style: { width: '40px' } },
+                            React.createElement(Checkbox, { checked: selectedRows.length === data.length, indeterminate: selectedRows.length > 0 && selectedRows.length < data.length, onChange: function (e) {
+                                    var newSelectedRows = e.currentTarget.checked ? __spreadArray([], data, true) : [];
+                                    setSelectedRows(newSelectedRows);
+                                    onRowSelected === null || onRowSelected === void 0 ? void 0 : onRowSelected(newSelectedRows);
+                                } }))),
+                        getFilteredColumns().map(function (setting) { return (React.createElement(Table.Th, { key: setting.field, onClick: function () {
+                                return setting.sortable ? handleSort(setting.field) : undefined;
+                            }, title: setting.description, style: {
+                                cursor: (setting.description || setting.sortable) ? 'pointer' : 'default',
+                                width: setting.width || 'auto'
+                            } },
+                            React.createElement(Group, { gap: "xs" },
+                                React.createElement(React.Fragment, null, setting.title),
+                                setting.sortable && (sortField === setting.field ? (React.createElement(Text, null, sortDirection === 'asc' ? '↑' : '↓')) : (React.createElement(IconArrowsSort, { size: 14, style: { opacity: 0.5 } })))))); }),
+                        isMenuAction && React.createElement(Table.Th, { style: { width: '50px' } }))),
+                React.createElement(Table.Tbody, null, data.map(function (row, rowIndex) { return (React.createElement(Table.Tr, { key: row.id || rowIndex },
+                    enableCheckbox && (React.createElement(Table.Td, null,
+                        React.createElement(Checkbox, { checked: selectedRows.some(function (r) { return r.id === row.id; }), onChange: function (e) { return handleRowSelect(row, e.currentTarget.checked); } }))),
+                    columnSettings
+                        .filter(function (setting) { return !isMenuAction || !setting.actions; })
+                        .map(function (setting) { return (React.createElement(Table.Td, { key: setting.field, onDoubleClick: function () {
+                            return handleCellDoubleClick(rowIndex, setting.field, row[setting.field]);
+                        } }, setting.actions && !isMenuAction ? (React.createElement(Group, { gap: "xs" }, setting.actions.map(function (action, actionIndex) { return (React.createElement(Button, { key: actionIndex, size: action.size || 'xs', variant: action.variant || 'filled', disabled: action.disabled, color: action.color, leftSection: action.icon, onClick: function () { return onRowAction === null || onRowAction === void 0 ? void 0 : onRowAction(action.name, row); } }, action.label)); }))) : (editingCell === null || editingCell === void 0 ? void 0 : editingCell.rowIndex) === rowIndex &&
+                        (editingCell === null || editingCell === void 0 ? void 0 : editingCell.field) === setting.field ? (React.createElement(Group, null,
+                        React.createElement(TextInput, { value: editingCell.value, onChange: function (e) {
+                                return setEditingCell(__assign(__assign({}, editingCell), { value: e.target.value }));
+                            } }),
+                        React.createElement(ActionIcon, { color: "green", variant: "subtle", onClick: handleEditSave },
+                            React.createElement(IconCheck, { size: 16 })),
+                        React.createElement(ActionIcon, { color: "red", variant: "subtle", onClick: function () { return setEditingCell(null); } },
+                            React.createElement(IconX, { size: 16 })))) : (formatValue(row, setting)))); }),
+                    isMenuAction && (React.createElement(Table.Td, null,
+                        React.createElement(Menu, null,
+                            React.createElement(Menu.Target, null,
+                                React.createElement(ActionIcon, { variant: "subtle" },
+                                    React.createElement(IconDotsVertical, { size: 16 }))),
+                            React.createElement(Menu.Dropdown, null, columnSettings.map(function (setting) {
+                                var _a;
+                                return (_a = setting.actions) === null || _a === void 0 ? void 0 : _a.map(function (action, actionIndex) { return (React.createElement(Menu.Item, { key: actionIndex, leftSection: action.icon, disabled: action.disabled, color: action.color, onClick: function () { return onRowAction === null || onRowAction === void 0 ? void 0 : onRowAction(action.name, row); } }, action.label)); });
+                            }))))))); })),
+                (footerSettings === null || footerSettings === void 0 ? void 0 : footerSettings.enabled) && footerData && (React.createElement(Table.Tfoot, null,
+                    React.createElement(Table.Tr, { style: footerSettings.style },
+                        enableCheckbox && React.createElement(Table.Td, null),
+                        columnSettings
+                            .filter(function (setting) { return !isMenuAction || !setting.actions; })
+                            .map(function (setting) { return (React.createElement(Table.Td, { key: setting.field }, footerData[setting.field] !== undefined ?
+                            formatValue(footerData, setting) : '')); }),
+                        isMenuAction && React.createElement(Table.Td, null))))))),
             enablePagination && (React.createElement(Group, { justify: "center", mt: "md", mb: "md" },
                 React.createElement(Pagination, { value: currentPage, onChange: setCurrentPage, total: totalPages }))))));
 }
