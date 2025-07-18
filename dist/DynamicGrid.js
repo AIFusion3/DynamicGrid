@@ -416,7 +416,7 @@ export default function DynamicGrid(_a) {
                                     return setting.sortable ? handleSort(setting.field) : undefined;
                                 }, title: setting.description, style: {
                                     cursor: (setting.description || setting.sortable) ? 'default' : 'default',
-                                    width: setting.width || 'auto'
+                                    width: "".concat(setting.width, "px !important")
                                 } },
                                 React.createElement(Group, { gap: "xs", wrap: "nowrap", justify: "space-between" },
                                     React.createElement(Text, { truncate: true, fw: 600, size: "sm", c: "black", style: {
