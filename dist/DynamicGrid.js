@@ -418,9 +418,16 @@ export default function DynamicGrid(_a) {
                                     cursor: (setting.description || setting.sortable) ? 'default' : 'default',
                                     width: setting.width || 'auto'
                                 } },
-                                React.createElement(Group, { gap: "xs", style: { flexWrap: 'nowrap' } },
-                                    React.createElement(React.Fragment, null, setting.title),
-                                    setting.sortable && (sortField === setting.field ? (React.createElement(Text, null, sortDirection === 'asc' ? '↑' : '↓')) : (React.createElement(IconArrowsSort, { size: 16, style: { opacity: 0.5, width: '16px', height: '16px' } })))))); }),
+                                React.createElement(Group, { gap: "xs", wrap: "nowrap" // flexWrap yerine wrap kullan
+                                    , justify: "space-between" // veya justify="flex-start"
+                                 },
+                                    React.createElement(Text, { truncate: true }, setting.title),
+                                    setting.sortable && (sortField === setting.field ? (React.createElement(Text, { size: "sm", style: { minWidth: '16px' } }, sortDirection === 'asc' ? '↑' : '↓')) : (React.createElement(IconArrowsSort, { size: 16, style: {
+                                            opacity: 0.5,
+                                            minWidth: '16px',
+                                            minHeight: '16px',
+                                            flexShrink: 0
+                                        } })))))); }),
                             isMenuAction && React.createElement(Table.Th, { style: { width: '50px' } }))),
                     React.createElement(Table.Tbody, null, data.map(function (row, rowIndex) { return (React.createElement(Table.Tr, { key: row.id || rowIndex },
                         enableCheckbox && (React.createElement(Table.Td, null,
