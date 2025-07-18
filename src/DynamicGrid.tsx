@@ -532,9 +532,8 @@ export default function DynamicGrid({
                             c="dimmed"
                             style={{
                               letterSpacing: '0.5px',
-                              textTransform: 'uppercase',
                               fontSize: '12px',
-                              color: 'var(--mantine-color-primary-6)'
+                              color: '#000000'
                             }}
                           >
                             {setting.title}

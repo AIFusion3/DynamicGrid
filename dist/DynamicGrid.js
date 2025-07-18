@@ -421,9 +421,8 @@ export default function DynamicGrid(_a) {
                                 React.createElement(Group, { gap: "xs", wrap: "nowrap", justify: "space-between" },
                                     React.createElement(Text, { truncate: true, fw: 600, size: "sm", c: "dimmed", style: {
                                             letterSpacing: '0.5px',
-                                            textTransform: 'uppercase',
                                             fontSize: '12px',
-                                            color: 'var(--mantine-color-primary-6)'
+                                            color: '#000000'
                                         } }, setting.title),
                                     setting.sortable && (sortField === setting.field ? (React.createElement(Text, { size: "sm", fw: 700, style: {
                                             minWidth: '16px',
