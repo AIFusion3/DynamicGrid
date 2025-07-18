@@ -416,11 +416,16 @@ export default function DynamicGrid(_a) {
                                     return setting.sortable ? handleSort(setting.field) : undefined;
                                 }, title: setting.description, style: {
                                     cursor: (setting.description || setting.sortable) ? 'pointer' : 'default',
-                                    width: setting.width || 'auto'
+                                    width: setting.width || 'auto',
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    wordBreak: 'break-word',
+                                    hyphens: 'auto'
                                 } },
-                                React.createElement(Group, { gap: "xs", style: { flexWrap: 'nowrap' } },
+                                React.createElement(Group, { gap: "xs" },
                                     React.createElement(React.Fragment, null, setting.title),
-                                    setting.sortable && (sortField === setting.field ? (React.createElement(Text, null, sortDirection === 'asc' ? '↑' : '↓')) : (React.createElement(IconArrowsSort, { size: 22, style: { opacity: 0.5, width: '22px', height: '22px' } })))))); }),
+                                    setting.sortable && (sortField === setting.field ? (React.createElement(Text, null, sortDirection === 'asc' ? '↑' : '↓')) : (React.createElement(IconArrowsSort, { size: 22, style: { opacity: 0.5, width: '16px !important', height: '16px !important', flexShrink: 0, minWidth: '16px', minHeight: '16px' } })))))); }),
                             isMenuAction && React.createElement(Table.Th, { style: { width: '50px' } }))),
                     React.createElement(Table.Tbody, null, data.map(function (row, rowIndex) { return (React.createElement(Table.Tr, { key: row.id || rowIndex },
                         enableCheckbox && (React.createElement(Table.Td, null,

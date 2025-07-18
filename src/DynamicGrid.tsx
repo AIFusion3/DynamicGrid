@@ -517,16 +517,21 @@ export default function DynamicGrid({
                           title={setting.description}
                           style={{ 
                             cursor: (setting.description || setting.sortable) ? 'pointer' : 'default',
-                            width: setting.width || 'auto'
+                            width: setting.width || 'auto',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            wordBreak: 'break-word',
+                            hyphens: 'auto'
                           }}
                         >
-                          <Group gap="xs" style={{ flexWrap: 'nowrap' }} >
+                          <Group gap="xs"  >
                             <>{setting.title}</>
                             {setting.sortable && (
                               sortField === setting.field ? (
                               <Text>{sortDirection === 'asc' ? '↑' : '↓'}</Text>
                               ) : (
-                                <IconArrowsSort size={22} style={{ opacity: 0.5, width: '22px', height: '22px' }} />
+                                <IconArrowsSort size={22} style={{ opacity: 0.5, width: '16px !important', height: '16px !important', flexShrink: 0, minWidth: '16px', minHeight: '16px' }} />
                               )
                             )}
                           </Group>
