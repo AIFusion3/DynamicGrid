@@ -158,7 +158,10 @@ interface TableSettings {
   withColumnBorders?: boolean;     // Sütun arası çizgiler
   stickyHeader?: boolean;          // Başlık satırlarının sabit kalması
   stickyHeaderOffset?: number;     // Sabit başlığın üstten uzaklığı (px)
+  horizontalScroll?: boolean;      // Yatay kaydırma özelliği
+  minWidth?: number;               // Tablo minimum genişliği (px)
 }
+```
 ```
 
 ### Table Settings Kullanımı
@@ -171,9 +174,12 @@ interface TableSettings {
     withTableBorder: true,         // Dış çerçeve var
     withColumnBorders: false,      // Sütun çizgileri yok
     stickyHeader: true,            // Başlık sabit
-    stickyHeaderOffset: 60         // Navbar için 60px boşluk
+    stickyHeaderOffset: 60,        // Navbar için 60px boşluk
+    horizontalScroll: true,        // Yatay kaydırma aktif
+    minWidth: 2300                 // Minimum tablo genişliği
   }}
 />
+```
 ```
 
 ### Sticky Header Özellikleri
@@ -182,6 +188,49 @@ interface TableSettings {
 - **Navbar Uyumluluğu**: `stickyHeaderOffset` ile sabit navbar'lar için boşluk ayarlanabilir
 - **Grup Başlıkları**: Column grouping aktifse grup başlıkları da sabit kalır
 - **Responsive**: Mobil cihazlarda da düzgün çalışır
+
+### Sütun Başlığı Stilleri
+
+DynamicGrid'de sütun başlıkları modern ve okunabilir bir tasarıma sahiptir:
+
+- **Typography**: 12px font boyutu, 600 font weight
+- **Letter Spacing**: 0.5px harf aralığı
+- **Flex Layout**: Başlık ve sıralama ikonu arasında esnek düzen
+- **Word Break**: Uzun başlıklar için kelime kırma
+- **Sort Icons**: Aktif sıralama için renkli oklar, pasif için şeffaf ikonlar
+- **Tooltip Support**: `description` field'i ile açıklama tooltip'leri
+
+### Horizontal Scroll Özellikleri
+
+- **Çok Sütunlu Tablolar**: Geniş tablolarda yatay kaydırma sağlar
+- **Minimum Genişlik**: `minWidth` ile tablo genişliği kontrol edilir
+- **Mantine ScrollContainer**: Mantine'in native scroll container'ı kullanılır
+- **Performans**: Sadece gerekli olduğunda scroll container aktif olur
+- **Responsive**: Mobil cihazlarda da düzgün çalışır
+
+### Horizontal Scroll Kullanımı
+
+```tsx
+<DynamicGrid
+  baseUrl="https://api.example.com"
+  endpoint="/products"
+  columnSettings={columnSettings}
+  tableSettings={{
+    horizontalScroll: true,    // Yatay kaydırma aktif
+    minWidth: 2300,           // Minimum 2300px genişlik
+    stickyHeader: true,       // Başlık sabit kalır
+    withTableBorder: true
+  }}
+/>
+```
+
+### Kullanım Senaryoları
+
+- **E-ticaret Ürün Listeleri**: Çok sayıda ürün özelliği
+- **Finansal Raporlar**: Detaylı finansal veriler
+- **Personel Yönetimi**: Kapsamlı personel bilgileri
+- **Envanter Takibi**: Detaylı stok bilgileri
+- **Analitik Dashboard**: Çok sütunlu raporlar
 
 ## 📄 Pagination Control
 

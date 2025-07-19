@@ -62,24 +62,24 @@ import React from 'react';
 import { IconCheck, IconX, IconDotsVertical, IconArrowsSort } from '@tabler/icons-react';
 export default function DynamicGrid(_a) {
     var _this = this;
-    var baseUrl = _a.baseUrl, endpoint = _a.endpoint, columnSettings = _a.columnSettings, _b = _a.enableEdit, enableEdit = _b === void 0 ? false : _b, _c = _a.enableCheckbox, enableCheckbox = _c === void 0 ? false : _c, _d = _a.tokenRequired, tokenRequired = _d === void 0 ? false : _d, _e = _a.pageSize, pageSize = _e === void 0 ? 10 : _e, _f = _a.enablePagination, enablePagination = _f === void 0 ? true : _f, _g = _a.queryParams, queryParams = _g === void 0 ? {} : _g, onRowAction = _a.onRowAction, onRowSelected = _a.onRowSelected, _h = _a.isMenuAction, isMenuAction = _h === void 0 ? false : _h, _j = _a.tableSettings, tableSettings = _j === void 0 ? {
+    var baseUrl = _a.baseUrl, endpoint = _a.endpoint, columnSettings = _a.columnSettings, _b = _a.enableEdit, enableEdit = _b === void 0 ? false : _b, _c = _a.enableCheckbox, enableCheckbox = _c === void 0 ? false : _c, _d = _a.tokenRequired, tokenRequired = _d === void 0 ? false : _d, _e = _a.pageSize, pageSize = _e === void 0 ? 10 : _e, _f = _a.enablePagination, enablePagination = _f === void 0 ? true : _f, _g = _a.actionColumnPosition, actionColumnPosition = _g === void 0 ? 'end' : _g, _h = _a.queryParams, queryParams = _h === void 0 ? {} : _h, onRowAction = _a.onRowAction, onRowSelected = _a.onRowSelected, _j = _a.isMenuAction, isMenuAction = _j === void 0 ? false : _j, _k = _a.tableSettings, tableSettings = _k === void 0 ? {
         highlightOnHover: true,
         withTableBorder: true,
         withColumnBorders: true
-    } : _j, _k = _a.footerSettings, footerSettings = _k === void 0 ? {
+    } : _k, _l = _a.footerSettings, footerSettings = _l === void 0 ? {
         enabled: false,
         endpoint: '',
-    } : _k, _l = _a.enableGrouping, enableGrouping = _l === void 0 ? false : _l, _m = _a.groupSettings, groupSettings = _m === void 0 ? [] : _m;
-    var _o = useState([]), data = _o[0], setData = _o[1];
-    var _p = useState(true), loading = _p[0], setLoading = _p[1];
-    var _q = useState(null), sortField = _q[0], setSortField = _q[1];
-    var _r = useState('asc'), sortDirection = _r[0], setSortDirection = _r[1];
-    var _s = useState(1), currentPage = _s[0], setCurrentPage = _s[1];
-    var _t = useState(1), totalPages = _t[0], setTotalPages = _t[1];
-    var _u = useState(null), editingCell = _u[0], setEditingCell = _u[1];
-    var _v = useState([]), selectedRows = _v[0], setSelectedRows = _v[1];
-    var _w = useState(null), footerData = _w[0], setFooterData = _w[1];
-    var _x = useState(false), footerLoading = _x[0], setFooterLoading = _x[1];
+    } : _l, _m = _a.enableGrouping, enableGrouping = _m === void 0 ? false : _m, _o = _a.groupSettings, groupSettings = _o === void 0 ? [] : _o;
+    var _p = useState([]), data = _p[0], setData = _p[1];
+    var _q = useState(true), loading = _q[0], setLoading = _q[1];
+    var _r = useState(null), sortField = _r[0], setSortField = _r[1];
+    var _s = useState('asc'), sortDirection = _s[0], setSortDirection = _s[1];
+    var _t = useState(1), currentPage = _t[0], setCurrentPage = _t[1];
+    var _u = useState(1), totalPages = _u[0], setTotalPages = _u[1];
+    var _v = useState(null), editingCell = _v[0], setEditingCell = _v[1];
+    var _w = useState([]), selectedRows = _w[0], setSelectedRows = _w[1];
+    var _x = useState(null), footerData = _x[0], setFooterData = _x[1];
+    var _y = useState(false), footerLoading = _y[0], setFooterLoading = _y[1];
     // Grouping helper functions
     var getColumnGroupInfo = function (field) {
         if (!enableGrouping || !groupSettings)
@@ -91,6 +91,17 @@ export default function DynamicGrid(_a) {
     };
     var getFilteredColumns = function () {
         return columnSettings.filter(function (setting) { return !isMenuAction || !setting.actions; });
+    };
+    var getSortedColumns = function () {
+        var filteredColumns = getFilteredColumns();
+        if (actionColumnPosition === 'start') {
+            // Action sütunlarını başa al
+            var actionColumns = filteredColumns.filter(function (col) { return col.actions; });
+            var nonActionColumns = filteredColumns.filter(function (col) { return !col.actions; });
+            return __spreadArray(__spreadArray([], actionColumns, true), nonActionColumns, true);
+        }
+        // Default: action sütunları sonda
+        return filteredColumns;
     };
     var fetchData = function () { return __awaiter(_this, void 0, void 0, function () {
         var headers, token, params_1, response, result, error_1;
@@ -131,7 +142,7 @@ export default function DynamicGrid(_a) {
                 case 2:
                     result = _a.sent();
                     setData(result.data);
-                    setTotalPages(result.page || result.total_pages || 1);
+                    setTotalPages(result.total_pages || result.page || 1);
                     return [3 /*break*/, 5];
                 case 3:
                     error_1 = _a.sent();
@@ -384,7 +395,7 @@ export default function DynamicGrid(_a) {
                         enableGrouping && groupSettings && groupSettings.length > 0 && (React.createElement(Table.Tr, null,
                             enableCheckbox && React.createElement(Table.Th, null),
                             (function () {
-                                var filteredColumns = getFilteredColumns();
+                                var filteredColumns = getSortedColumns();
                                 var renderedGroups = new Set();
                                 var elements = [];
                                 for (var i = 0; i < filteredColumns.length; i++) {
@@ -412,7 +423,7 @@ export default function DynamicGrid(_a) {
                                         setSelectedRows(newSelectedRows);
                                         onRowSelected === null || onRowSelected === void 0 ? void 0 : onRowSelected(newSelectedRows);
                                     } }))),
-                            getFilteredColumns().map(function (setting) { return (React.createElement(Table.Th, { key: setting.field, onClick: function () {
+                            getSortedColumns().map(function (setting) { return (React.createElement(Table.Th, { key: setting.field, onClick: function () {
                                     return setting.sortable ? handleSort(setting.field) : undefined;
                                 }, title: setting.description, style: {
                                     cursor: 'default',
@@ -443,9 +454,7 @@ export default function DynamicGrid(_a) {
                     React.createElement(Table.Tbody, null, data.map(function (row, rowIndex) { return (React.createElement(Table.Tr, { key: row.id || rowIndex },
                         enableCheckbox && (React.createElement(Table.Td, null,
                             React.createElement(Checkbox, { checked: selectedRows.some(function (r) { return r.id === row.id; }), onChange: function (e) { return handleRowSelect(row, e.currentTarget.checked); } }))),
-                        columnSettings
-                            .filter(function (setting) { return !isMenuAction || !setting.actions; })
-                            .map(function (setting) { return (React.createElement(Table.Td, { key: setting.field, onDoubleClick: function () {
+                        getSortedColumns().map(function (setting) { return (React.createElement(Table.Td, { key: setting.field, onDoubleClick: function () {
                                 return handleCellDoubleClick(rowIndex, setting.field, row[setting.field]);
                             } }, setting.actions && !isMenuAction ? (React.createElement(Group, { gap: "xs" }, setting.actions.map(function (action, actionIndex) { return (React.createElement(Button, { key: actionIndex, size: action.size || 'xs', variant: action.variant || 'filled', disabled: action.disabled, color: action.color, leftSection: action.icon, onClick: function () { return onRowAction === null || onRowAction === void 0 ? void 0 : onRowAction(action.name, row); } }, action.label)); }))) : (editingCell === null || editingCell === void 0 ? void 0 : editingCell.rowIndex) === rowIndex &&
                             (editingCell === null || editingCell === void 0 ? void 0 : editingCell.field) === setting.field ? (React.createElement(Group, null,
@@ -468,9 +477,7 @@ export default function DynamicGrid(_a) {
                     (footerSettings === null || footerSettings === void 0 ? void 0 : footerSettings.enabled) && footerData && (React.createElement(Table.Tfoot, null,
                         React.createElement(Table.Tr, { style: footerSettings.style },
                             enableCheckbox && React.createElement(Table.Td, null),
-                            columnSettings
-                                .filter(function (setting) { return !isMenuAction || !setting.actions; })
-                                .map(function (setting) { return (React.createElement(Table.Td, { key: setting.field }, footerData[setting.field] !== undefined ?
+                            getSortedColumns().map(function (setting) { return (React.createElement(Table.Td, { key: setting.field }, footerData[setting.field] !== undefined ?
                                 formatValue(footerData, setting) : '')); }),
                             isMenuAction && React.createElement(Table.Td, null))))));
                 return tableSettings.horizontalScroll && tableSettings.minWidth ? (React.createElement(Table.ScrollContainer, { minWidth: tableSettings.minWidth }, tableComponent)) : tableComponent;

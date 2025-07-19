@@ -72,6 +72,7 @@ interface DynamicGridProps {
   tokenRequired?: boolean;
   pageSize?: number;
   enablePagination?: boolean;
+  actionColumnPosition?: 'start' | 'end';
   queryParams?: Record<string, string>;
   onRowAction?: (actionName: string, rowData: any) => void;
   onRowSelected?: (selectedRows: any[]) => void;
@@ -103,6 +104,7 @@ export default function DynamicGrid({
   tokenRequired = false,
   pageSize = 10,
   enablePagination = true,
+  actionColumnPosition = 'end',
   queryParams = {},
   onRowAction,
   onRowSelected,
@@ -148,6 +150,20 @@ export default function DynamicGrid({
     return columnSettings.filter(setting => !isMenuAction || !setting.actions);
   };
 
+  const getSortedColumns = () => {
+    const filteredColumns = getFilteredColumns();
+    
+    if (actionColumnPosition === 'start') {
+      // Action sütunlarını başa al
+      const actionColumns = filteredColumns.filter(col => col.actions);
+      const nonActionColumns = filteredColumns.filter(col => !col.actions);
+      return [...actionColumns, ...nonActionColumns];
+    }
+    
+    // Default: action sütunları sonda
+    return filteredColumns;
+  };
+
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -185,7 +201,7 @@ export default function DynamicGrid({
       const result = await response.json();
 
       setData(result.data);
-      setTotalPages(result.page || result.total_pages || 1);
+      setTotalPages( result.total_pages || result.page || 1);
 
     } catch (error) {
       console.error('Fetch error:', error);
@@ -451,7 +467,7 @@ export default function DynamicGrid({
                     <Table.Tr>
                       {enableCheckbox && <Table.Th></Table.Th>}
                       {(() => {
-                        const filteredColumns = getFilteredColumns();
+                        const filteredColumns = getSortedColumns();
                         const renderedGroups = new Set();
                         const elements = [];
 
@@ -508,7 +524,7 @@ export default function DynamicGrid({
                         />
                       </Table.Th>
                     )}
-                    {getFilteredColumns().map((setting) => (
+                    {getSortedColumns().map((setting) => (
                       <Table.Th
                         key={setting.field}
                         onClick={() =>
@@ -585,19 +601,17 @@ export default function DynamicGrid({
                           />
                         </Table.Td>
                       )}
-                      {columnSettings
-                        .filter(setting => !isMenuAction || !setting.actions)
-                        .map((setting) => (
-                          <Table.Td
-                            key={setting.field}
-                            onDoubleClick={() =>
-                              handleCellDoubleClick(
-                                rowIndex,
-                                setting.field,
-                                row[setting.field]
-                              )
-                            }
-                          >
+                      {getSortedColumns().map((setting) => (
+                        <Table.Td
+                          key={setting.field}
+                          onDoubleClick={() =>
+                            handleCellDoubleClick(
+                              rowIndex,
+                              setting.field,
+                              row[setting.field]
+                            )
+                          }
+                        >
                             {setting.actions && !isMenuAction ? (
                               <Group gap="xs">
                                 {setting.actions.map((action, actionIndex) => (
@@ -679,15 +693,13 @@ export default function DynamicGrid({
                   <Table.Tfoot>
                     <Table.Tr style={footerSettings.style}>
                       {enableCheckbox && <Table.Td></Table.Td>}
-                      {columnSettings
-                        .filter(setting => !isMenuAction || !setting.actions)
-                        .map((setting) => (
-                          <Table.Td key={setting.field}>
-                            {footerData[setting.field] !== undefined ?
-                              formatValue(footerData, setting) : ''
-                            }
-                          </Table.Td>
-                        ))}
+                      {getSortedColumns().map((setting) => (
+                        <Table.Td key={setting.field}>
+                          {footerData[setting.field] !== undefined ?
+                            formatValue(footerData, setting) : ''
+                          }
+                        </Table.Td>
+                      ))}
                       {isMenuAction && <Table.Td></Table.Td>}
                     </Table.Tr>
                   </Table.Tfoot>
