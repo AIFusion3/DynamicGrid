@@ -103,6 +103,21 @@ export default function DynamicGrid(_a) {
         // Default: action sütunları sonda
         return filteredColumns;
     };
+    var isActionVisible = function (action, row) {
+        // showField kontrolü: eğer showField varsa ve değeri true değilse gizle
+        if (action.showField) {
+            var showValue = getNestedValue(row, action.showField);
+            if (!showValue)
+                return false;
+        }
+        // hideField kontrolü: eğer hideField varsa ve değeri true ise gizle
+        if (action.hideField) {
+            var hideValue = getNestedValue(row, action.hideField);
+            if (hideValue)
+                return false;
+        }
+        return true;
+    };
     var fetchData = function () { return __awaiter(_this, void 0, void 0, function () {
         var headers, token, params_1, response, result, error_1;
         return __generator(this, function (_a) {
@@ -456,7 +471,9 @@ export default function DynamicGrid(_a) {
                             React.createElement(Checkbox, { checked: selectedRows.some(function (r) { return r.id === row.id; }), onChange: function (e) { return handleRowSelect(row, e.currentTarget.checked); } }))),
                         getSortedColumns().map(function (setting) { return (React.createElement(Table.Td, { key: setting.field, onDoubleClick: function () {
                                 return handleCellDoubleClick(rowIndex, setting.field, row[setting.field]);
-                            } }, setting.actions && !isMenuAction ? (React.createElement(Group, { gap: "xs" }, setting.actions.map(function (action, actionIndex) { return (React.createElement(Button, { key: actionIndex, size: action.size || 'xs', variant: action.variant || 'filled', disabled: action.disabled, color: action.color, leftSection: action.icon, onClick: function () { return onRowAction === null || onRowAction === void 0 ? void 0 : onRowAction(action.name, row); } }, action.label)); }))) : (editingCell === null || editingCell === void 0 ? void 0 : editingCell.rowIndex) === rowIndex &&
+                            } }, setting.actions && !isMenuAction ? (React.createElement(Group, { gap: "xs" }, setting.actions
+                            .filter(function (action) { return isActionVisible(action, row); })
+                            .map(function (action, actionIndex) { return (React.createElement(Button, { key: actionIndex, size: action.size || 'xs', variant: action.variant || 'filled', disabled: action.disabled, color: action.color, leftSection: action.icon, onClick: function () { return onRowAction === null || onRowAction === void 0 ? void 0 : onRowAction(action.name, row); } }, action.label)); }))) : (editingCell === null || editingCell === void 0 ? void 0 : editingCell.rowIndex) === rowIndex &&
                             (editingCell === null || editingCell === void 0 ? void 0 : editingCell.field) === setting.field ? (React.createElement(Group, null,
                             React.createElement(TextInput, { value: editingCell.value, onChange: function (e) {
                                     return setEditingCell(__assign(__assign({}, editingCell), { value: e.target.value }));
@@ -471,8 +488,8 @@ export default function DynamicGrid(_a) {
                                     React.createElement(ActionIcon, { variant: "subtle" },
                                         React.createElement(IconDotsVertical, { size: 16 }))),
                                 React.createElement(Menu.Dropdown, null, columnSettings.map(function (setting) {
-                                    var _a;
-                                    return (_a = setting.actions) === null || _a === void 0 ? void 0 : _a.map(function (action, actionIndex) { return (React.createElement(Menu.Item, { key: actionIndex, leftSection: action.icon, disabled: action.disabled, color: action.color, onClick: function () { return onRowAction === null || onRowAction === void 0 ? void 0 : onRowAction(action.name, row); } }, action.label)); });
+                                    var _a, _b;
+                                    return (_b = (_a = setting.actions) === null || _a === void 0 ? void 0 : _a.filter(function (action) { return isActionVisible(action, row); })) === null || _b === void 0 ? void 0 : _b.map(function (action, actionIndex) { return (React.createElement(Menu.Item, { key: actionIndex, leftSection: action.icon, disabled: action.disabled, color: action.color, onClick: function () { return onRowAction === null || onRowAction === void 0 ? void 0 : onRowAction(action.name, row); } }, action.label)); });
                                 }))))))); })),
                     (footerSettings === null || footerSettings === void 0 ? void 0 : footerSettings.enabled) && footerData && (React.createElement(Table.Tfoot, null,
                         React.createElement(Table.Tr, { style: footerSettings.style },

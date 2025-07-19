@@ -27,6 +27,8 @@ interface ActionButton {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   disabled?: boolean;
   color?: string;
+  showField?: string;
+  hideField?: string;
 }
 
 interface ChipCondition {
@@ -162,6 +164,22 @@ export default function DynamicGrid({
     
     // Default: action sütunları sonda
     return filteredColumns;
+  };
+
+  const isActionVisible = (action: ActionButton, row: any) => {
+    // showField kontrolü: eğer showField varsa ve değeri true değilse gizle
+    if (action.showField) {
+      const showValue = getNestedValue(row, action.showField);
+      if (!showValue) return false;
+    }
+
+    // hideField kontrolü: eğer hideField varsa ve değeri true ise gizle
+    if (action.hideField) {
+      const hideValue = getNestedValue(row, action.hideField);
+      if (hideValue) return false;
+    }
+
+    return true;
   };
 
   const fetchData = async () => {
@@ -614,7 +632,9 @@ export default function DynamicGrid({
                         >
                             {setting.actions && !isMenuAction ? (
                               <Group gap="xs">
-                                {setting.actions.map((action, actionIndex) => (
+                                {setting.actions
+                                  .filter(action => isActionVisible(action, row))
+                                  .map((action, actionIndex) => (
                                   <Button
                                     key={actionIndex}
                                     size={action.size || 'xs'}
@@ -670,7 +690,9 @@ export default function DynamicGrid({
                             </Menu.Target>
                             <Menu.Dropdown>
                               {columnSettings.map(setting =>
-                                setting.actions?.map((action, actionIndex) => (
+                                setting.actions
+                                  ?.filter(action => isActionVisible(action, row))
+                                  ?.map((action, actionIndex) => (
                                   <Menu.Item
                                     key={actionIndex}
                                     leftSection={action.icon}

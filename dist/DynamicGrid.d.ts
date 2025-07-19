@@ -7,6 +7,8 @@ interface ActionButton {
     size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
     disabled?: boolean;
     color?: string;
+    showField?: string;
+    hideField?: string;
 }
 interface ChipCondition {
     field?: string;

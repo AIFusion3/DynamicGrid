@@ -143,6 +143,7 @@ const MyComponent = () => {
 | tokenRequired | boolean | false | For APIs requiring token |
 | pageSize | number | 10 | Number of records per page |
 | enablePagination | boolean | true | Enables or disables pagination |
+| actionColumnPosition | 'start' \| 'end' | 'end' | Controls position of action columns (start or end of table) |
 | queryParams | object | {} | Query parameters to add to API call |
 | onRowAction | function | - | Callback function triggered when an action button/menu item is clicked. Returns action name and row data |
 | onRowSelected | function | - | Callback function triggered when rows are selected/unselected. Returns array of selected rows when enableCheckbox is true |
@@ -307,11 +308,13 @@ interface ColumnSetting {
 interface ActionButton {
   name: string;               // Action name
   label: string;             // Button label
-  icon?: string;             // Tabler icon name
+  icon?: React.ReactElement; // React icon element
   variant?: string;          // Button variant
   size?: string;             // Button size
   disabled?: boolean;        // Disabled state
   color?: string;            // Button color
+  showField?: string;        // Field name - action visible when this field is true
+  hideField?: string;        // Field name - action hidden when this field is true
 }
 ```
 
@@ -393,6 +396,135 @@ footerSettings?: {
 - **Personel Listeleri**: Toplam maaş, personel sayısı
 - **Satış Raporları**: Toplam satış, ortalama sipariş tutarı
 - **Envanter Yönetimi**: Toplam stok değeri, ürün sayısı
+
+## 🎯 Action Column Position Control
+
+DynamicGrid'de action sütunlarının (butonlar/menu) tabloda başta mı yoksa sonda mı görüneceğini kontrol edebilirsiniz.
+
+### Action Column Position Kullanımı
+
+```tsx
+// Action Sütunu Sonda (Default)
+<DynamicGrid
+  baseUrl="https://api.example.com"
+  endpoint="/users"
+  columnSettings={columnSettings}
+  actionColumnPosition="end"  // Default değer
+/>
+
+// Action Sütunu Başta
+<DynamicGrid
+  baseUrl="https://api.example.com"
+  endpoint="/users"
+  columnSettings={columnSettings}
+  actionColumnPosition="start"  // Action sütunu başta
+/>
+```
+
+### Action Column Position Özellikleri
+
+- **`actionColumnPosition="start"`**: Action sütunları tabloda başta görünür
+- **`actionColumnPosition="end"`**: Action sütunları tabloda sonda görünür (default)
+- **Otomatik Sıralama**: Action sütunları otomatik olarak başa veya sona yerleştirilir
+- **Diğer Sütunlar**: Normal sütunların sırası değişmez
+- **Tüm Bölümler**: Header, body, footer ve grouping'de çalışır
+- **Mobil Uyumlu**: Mobil görünümlerde daha iyi kullanıcı deneyimi sağlar
+
+### Kullanım Senaryoları
+
+- **Mobil Öncelikli**: Action butonları başta olduğunda mobil cihazlarda daha kolay erişim
+- **Tasarım Gereksinimleri**: Belirli tasarım standartlarına uygunluk
+- **Kullanıcı Alışkanlıkları**: Farklı kullanıcı gruplarının tercihleri
+- **Responsive Tasarım**: Farklı ekran boyutlarında optimize edilmiş görünüm
+
+## 🎭 Conditional Action Visibility
+
+DynamicGrid'de action butonlarının görünürlüğünü veri durumuna göre dinamik olarak kontrol edebilirsiniz. Bu özellik, kullanıcı yetkilerine, veri durumuna veya diğer koşullara göre action'ları göstermenizi/gizlemenizi sağlar.
+
+### Conditional Action Kullanımı
+
+```tsx
+const columnSettings: ColumnSetting[] = [
+  {
+    field: 'name',
+    title: 'İsim',
+    actions: [
+      {
+        label: 'Düzenle',
+        name: 'edit',
+        showField: 'canEdit',        // canEdit true ise görünür
+        icon: <IconEdit size={16} />
+      },
+      {
+        label: 'Sil',
+        name: 'delete',
+        hideField: 'isDeleted',      // isDeleted true ise gizli
+        icon: <IconTrash size={16} />
+      },
+      {
+        label: 'Onayla',
+        name: 'approve',
+        showField: 'needsApproval',  // needsApproval true ise görünür
+        hideField: 'isApproved',     // isApproved true ise gizli
+        icon: <IconCheck size={16} />
+      }
+    ]
+  }
+];
+```
+
+### Conditional Action Özellikleri
+
+- **`showField`**: Belirtilen field'ın değeri `true` ise action görünür
+- **`hideField`**: Belirtilen field'ın değeri `true` ise action gizli
+- **Nested Field Desteği**: `user.permissions.canEdit` gibi nested field'lar desteklenir
+- **Her İki Tip**: Hem button hem menu action'ları için çalışır
+- **Dinamik Kontrol**: Her satır için ayrı ayrı kontrol edilir
+- **Performans**: Gereksiz render'ları önler
+
+### Conditional Logic
+
+```typescript
+// showField kontrolü
+if (action.showField) {
+  const showValue = getNestedValue(row, action.showField);
+  if (!showValue) return false; // Gizle
+}
+
+// hideField kontrolü  
+if (action.hideField) {
+  const hideValue = getNestedValue(row, action.hideField);
+  if (hideValue) return false; // Gizle
+}
+
+return true; // Göster
+```
+
+### Kullanım Senaryoları
+
+- **Yetki Kontrolü**: Kullanıcının yetkisine göre action'ları gösterme/gizleme
+- **Durum Kontrolü**: Veri durumuna göre uygun action'ları gösterme
+- **İş Akışı**: Belirli aşamalarda sadece ilgili action'ları gösterme
+- **Güvenlik**: Hassas işlemleri sadece yetkili kullanıcılara gösterme
+- **UX Optimizasyonu**: Kullanıcı deneyimini iyileştirmek için gereksiz action'ları gizleme
+
+### Örnek Veri Yapısı
+
+```json
+{
+  "id": 1,
+  "name": "John Doe",
+  "canEdit": true,           // showField için
+  "isDeleted": false,        // hideField için
+  "needsApproval": true,     // showField için
+  "isApproved": false,       // hideField için
+  "user": {
+    "permissions": {
+      "canDelete": true      // Nested field örneği
+    }
+  }
+}
+```
 
 ## 🔐 Token Usage
 
