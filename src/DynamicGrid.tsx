@@ -344,30 +344,11 @@ export default function DynamicGrid({
         
         // Date objesi mi kontrol et
         if (value instanceof Date) {
-          return value.toLocaleString('tr-TR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-          });
+          return value.toString();
         }
         
-        // String ise Date'e çevir
-        try {
-          const dateValue = new Date(value);
-          if (isNaN(dateValue.getTime())) return value; // Geçersiz tarih ise orijinal değeri döndür
-          
-          return dateValue.toLocaleString('tr-TR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-          });
-        } catch {
-          return value; // Hata durumunda orijinal değeri döndür
-        }
+        // String ise direkt döndür
+        return value;
       case 'datetimez':
         return value ? new Date(value).toLocaleString('tr-TR', {
           day: '2-digit',
