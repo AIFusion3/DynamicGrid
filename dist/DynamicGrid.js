@@ -296,13 +296,24 @@ export default function DynamicGrid(_a) {
                 // String ise direkt döndür
                 return value;
             case 'datetimez':
-                return value ? new Date(value).toLocaleString('tr-TR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                }) : '';
+                if (!value)
+                    return '';
+                try {
+                    // ISO string formatını parse et
+                    var date = new Date(value);
+                    if (isNaN(date.getTime()))
+                        return value;
+                    // Türkçe format: DD.MM.YYYY HH:mm
+                    var day = date.getDate().toString().padStart(2, '0');
+                    var month = (date.getMonth() + 1).toString().padStart(2, '0');
+                    var year = date.getFullYear();
+                    var hours = date.getHours().toString().padStart(2, '0');
+                    var minutes = date.getMinutes().toString().padStart(2, '0');
+                    return "".concat(day, ".").concat(month, ".").concat(year, " ").concat(hours, ":").concat(minutes);
+                }
+                catch (_b) {
+                    return value;
+                }
             case 'number':
                 return value ? Number(value).toLocaleString() : '';
             case 'money':
