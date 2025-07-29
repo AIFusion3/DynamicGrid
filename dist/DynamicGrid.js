@@ -290,17 +290,15 @@ export default function DynamicGrid(_a) {
                 if (!value)
                     return '';
                 try {
-                    // ISO string formatını parse et
                     var date = new Date(value);
                     if (isNaN(date.getTime()))
                         return value;
-                    // Türkçe format: DD.MM.YYYY HH:mm
-                    var day = date.getDate().toString().padStart(2, '0');
-                    var month = (date.getMonth() + 1).toString().padStart(2, '0');
-                    var year = date.getFullYear();
-                    var hours = date.getHours().toString().padStart(2, '0');
-                    var minutes = date.getMinutes().toString().padStart(2, '0');
-                    return "".concat(day, ".").concat(month, ".").concat(year, " ").concat(hours, ":").concat(minutes);
+                    var utcDay = date.getUTCDate().toString().padStart(2, '0');
+                    var utcMonth = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+                    var utcYear = date.getUTCFullYear();
+                    var utcHours = date.getUTCHours().toString().padStart(2, '0');
+                    var utcMinutes = date.getUTCMinutes().toString().padStart(2, '0');
+                    return "".concat(utcDay, ".").concat(utcMonth, ".").concat(utcYear, " ").concat(utcHours, ":").concat(utcMinutes);
                 }
                 catch (_b) {
                     return value;
