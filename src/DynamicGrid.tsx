@@ -342,16 +342,6 @@ export default function DynamicGrid({
       case 'datetime':
         if (!value) return '';
         
-        // Date objesi mi kontrol et
-        if (value instanceof Date) {
-          return value.toString();
-        }
-        
-        // String ise direkt döndür
-        return value;
-      case 'datetimez':
-        if (!value) return '';
-        
         try {
           // ISO string formatını parse et
           const date = new Date(value);
@@ -368,6 +358,15 @@ export default function DynamicGrid({
         } catch {
           return value;
         }
+      case 'datetimez':
+        return value ? new Date(value).toLocaleString('tr-TR', {
+          timeZone: 'Europe/Istanbul',
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }) : '';
       case 'number':
         return value ? Number(value).toLocaleString() : '';
       case 'money':
