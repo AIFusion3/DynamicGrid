@@ -588,7 +588,7 @@ export default function DynamicGrid({
                               letterSpacing: '0.5px',
                               fontSize: '12px',
                               whiteSpace: 'normal',
-                              wordBreak: 'break-word',
+                              wordBreak: 'normal',
                               lineHeight: 1.2,
                               flex: 1
                             }}
