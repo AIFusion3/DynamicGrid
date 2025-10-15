@@ -62,24 +62,43 @@ import React from 'react';
 import { IconCheck, IconX, IconDotsVertical, IconArrowsSort } from '@tabler/icons-react';
 export default function DynamicGrid(_a) {
     var _this = this;
-    var baseUrl = _a.baseUrl, endpoint = _a.endpoint, columnSettings = _a.columnSettings, _b = _a.enableEdit, enableEdit = _b === void 0 ? false : _b, _c = _a.enableCheckbox, enableCheckbox = _c === void 0 ? false : _c, _d = _a.tokenRequired, tokenRequired = _d === void 0 ? false : _d, _e = _a.pageSize, pageSize = _e === void 0 ? 10 : _e, _f = _a.enablePagination, enablePagination = _f === void 0 ? true : _f, _g = _a.actionColumnPosition, actionColumnPosition = _g === void 0 ? 'end' : _g, _h = _a.queryParams, queryParams = _h === void 0 ? {} : _h, onRowAction = _a.onRowAction, onRowSelected = _a.onRowSelected, _j = _a.isMenuAction, isMenuAction = _j === void 0 ? false : _j, _k = _a.tableSettings, tableSettings = _k === void 0 ? {
+    var baseUrl = _a.baseUrl, endpoint = _a.endpoint, columnSettings = _a.columnSettings, _b = _a.enableEdit, enableEdit = _b === void 0 ? false : _b, _c = _a.enableCheckbox, enableCheckbox = _c === void 0 ? false : _c, _d = _a.tokenRequired, tokenRequired = _d === void 0 ? false : _d, _e = _a.pageSize, pageSize = _e === void 0 ? 10 : _e, _f = _a.enablePagination, enablePagination = _f === void 0 ? true : _f, _g = _a.actionColumnPosition, actionColumnPosition = _g === void 0 ? 'end' : _g, _h = _a.enableFlag, enableFlag = _h === void 0 ? false : _h, _j = _a.flagField, flagField = _j === void 0 ? 'flag' : _j, _k = _a.showTotalRecords, showTotalRecords = _k === void 0 ? false : _k, _l = _a.totalRecordsLabel, totalRecordsLabel = _l === void 0 ? 'Toplam: {}' : _l, _m = _a.queryParams, queryParams = _m === void 0 ? {} : _m, onRowAction = _a.onRowAction, onRowSelected = _a.onRowSelected, _o = _a.isMenuAction, isMenuAction = _o === void 0 ? false : _o, _p = _a.tableSettings, tableSettings = _p === void 0 ? {
         highlightOnHover: true,
         withTableBorder: true,
         withColumnBorders: true
-    } : _k, _l = _a.footerSettings, footerSettings = _l === void 0 ? {
+    } : _p, _q = _a.footerSettings, footerSettings = _q === void 0 ? {
         enabled: false,
         endpoint: '',
-    } : _l, _m = _a.enableGrouping, enableGrouping = _m === void 0 ? false : _m, _o = _a.groupSettings, groupSettings = _o === void 0 ? [] : _o;
-    var _p = useState([]), data = _p[0], setData = _p[1];
-    var _q = useState(true), loading = _q[0], setLoading = _q[1];
-    var _r = useState(null), sortField = _r[0], setSortField = _r[1];
-    var _s = useState('asc'), sortDirection = _s[0], setSortDirection = _s[1];
-    var _t = useState(1), currentPage = _t[0], setCurrentPage = _t[1];
-    var _u = useState(1), totalPages = _u[0], setTotalPages = _u[1];
-    var _v = useState(null), editingCell = _v[0], setEditingCell = _v[1];
-    var _w = useState([]), selectedRows = _w[0], setSelectedRows = _w[1];
-    var _x = useState(null), footerData = _x[0], setFooterData = _x[1];
-    var _y = useState(false), footerLoading = _y[0], setFooterLoading = _y[1];
+    } : _q, _r = _a.enableGrouping, enableGrouping = _r === void 0 ? false : _r, _s = _a.groupSettings, groupSettings = _s === void 0 ? [] : _s;
+    var _t = useState([]), data = _t[0], setData = _t[1];
+    var _u = useState(true), loading = _u[0], setLoading = _u[1];
+    var _v = useState(null), sortField = _v[0], setSortField = _v[1];
+    var _w = useState('asc'), sortDirection = _w[0], setSortDirection = _w[1];
+    var _x = useState(1), currentPage = _x[0], setCurrentPage = _x[1];
+    var _y = useState(1), totalPages = _y[0], setTotalPages = _y[1];
+    var _z = useState(0), totalRecords = _z[0], setTotalRecords = _z[1];
+    var _0 = useState(null), editingCell = _0[0], setEditingCell = _0[1];
+    var _1 = useState([]), selectedRows = _1[0], setSelectedRows = _1[1];
+    var _2 = useState(null), footerData = _2[0], setFooterData = _2[1];
+    var _3 = useState(false), footerLoading = _3[0], setFooterLoading = _3[1];
+    // Flag color palette - soft and matte colors
+    var flagColors = {
+        black: 'rgba(64, 64, 64, 0.08)', // Soft dark gray
+        red: 'rgba(239, 68, 68, 0.12)', // Soft matte red
+        yellow: 'rgba(251, 191, 36, 0.15)', // Soft matte yellow
+        blue: 'rgba(59, 130, 246, 0.12)', // Soft matte blue
+        green: 'rgba(34, 197, 94, 0.12)', // Soft matte green
+    };
+    // Get row background color based on flag
+    var getRowBackgroundColor = function (row) {
+        if (!enableFlag)
+            return undefined;
+        var flagValue = getNestedValue(row, flagField);
+        if (!flagValue)
+            return undefined;
+        var colorKey = flagValue.toLowerCase().trim();
+        return flagColors[colorKey] || undefined;
+    };
     // Grouping helper functions
     var getColumnGroupInfo = function (field) {
         if (!enableGrouping || !groupSettings)
@@ -158,6 +177,7 @@ export default function DynamicGrid(_a) {
                     result = _a.sent();
                     setData(result.data);
                     setTotalPages(result.total_pages || result.page || 1);
+                    setTotalRecords(result.total || 0);
                     return [3 /*break*/, 5];
                 case 3:
                     error_1 = _a.sent();
@@ -422,6 +442,15 @@ export default function DynamicGrid(_a) {
                 minHeight: 'inherit'
             } },
             React.createElement(LoadingOverlay, { visible: loading }),
+            showTotalRecords && (React.createElement(Box, { style: {
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    marginBottom: '8px'
+                } },
+                React.createElement(Text, { size: "xs", c: "dimmed", style: {
+                        fontSize: '11px',
+                        fontWeight: 500
+                    } }, totalRecordsLabel.replace('{}', totalRecords.toLocaleString('tr-TR'))))),
             React.createElement(Box, { style: { flex: 1 } }, (function () {
                 var tableComponent = (React.createElement(Table, { highlightOnHover: tableSettings.highlightOnHover, withTableBorder: tableSettings.withTableBorder, withColumnBorders: tableSettings.withColumnBorders, stickyHeader: tableSettings.stickyHeader, stickyHeaderOffset: tableSettings.stickyHeaderOffset },
                     React.createElement(Table.Thead, null,
@@ -484,7 +513,9 @@ export default function DynamicGrid(_a) {
                                             flexShrink: 0
                                         } })))))); }),
                             isMenuAction && React.createElement(Table.Th, { style: { width: '50px' } }))),
-                    React.createElement(Table.Tbody, null, data.map(function (row, rowIndex) { return (React.createElement(Table.Tr, { key: row.id || rowIndex },
+                    React.createElement(Table.Tbody, null, data.map(function (row, rowIndex) { return (React.createElement(Table.Tr, { key: row.id || rowIndex, style: {
+                            backgroundColor: getRowBackgroundColor(row)
+                        } },
                         enableCheckbox && (React.createElement(Table.Td, null,
                             React.createElement(Checkbox, { checked: selectedRows.some(function (r) { return r.id === row.id; }), onChange: function (e) { return handleRowSelect(row, e.currentTarget.checked); } }))),
                         getSortedColumns().map(function (setting) { return (React.createElement(Table.Td, { key: setting.field, onDoubleClick: function () {

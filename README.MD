@@ -13,6 +13,8 @@ DynamicGrid is a dynamic data table component developed using React and Mantine 
 - 🔗 Custom link and image views
 - 🏷️ Chip/Badge displays
 - 🔒 Token-based authorization support
+- 🏳️ Dynamic row background coloring with flag system
+- 🔢 Total records display with customizable labels
 
 ## 📦 Installation
 
@@ -144,6 +146,10 @@ const MyComponent = () => {
 | pageSize | number | 10 | Number of records per page |
 | enablePagination | boolean | true | Enables or disables pagination |
 | actionColumnPosition | 'start' \| 'end' | 'end' | Controls position of action columns (start or end of table) |
+| enableFlag | boolean | false | Enables row background coloring based on flag field |
+| flagField | string | 'flag' | Field name for flag colors (requires enableFlag=true) |
+| showTotalRecords | boolean | false | Shows total record count above the table |
+| totalRecordsLabel | string | 'Toplam: {}' | Label format for total records (use {} as placeholder) |
 | queryParams | object | {} | Query parameters to add to API call |
 | onRowAction | function | - | Callback function triggered when an action button/menu item is clicked. Returns action name and row data |
 | onRowSelected | function | - | Callback function triggered when rows are selected/unselected. Returns array of selected rows when enableCheckbox is true |
@@ -525,6 +531,155 @@ return true; // Göster
   }
 }
 ```
+
+## 🏳️ Row Flag Coloring
+
+DynamicGrid'de satırları dinamik olarak renklendirerek görsel olarak işaretleyebilirsiniz. Bu özellik, datasource'dan gelen bir flag field'ına göre satır arka planlarını soft ve mat renklerle boyar.
+
+### Flag Kullanımı
+
+```tsx
+<DynamicGrid
+  baseUrl="https://api.example.com"
+  endpoint="/users"
+  columnSettings={columnSettings}
+  enableFlag={true}        // Flag özelliğini aktif et
+  flagField="status_flag"  // Varsayılan 'flag', isteğe bağlı
+/>
+```
+
+### API Response Formatı
+
+```json
+{
+  "data": [
+    { "id": 1, "name": "John", "flag": "red" },      // Kırmızı arka plan
+    { "id": 2, "name": "Jane", "flag": "green" },    // Yeşil arka plan
+    { "id": 3, "name": "Bob", "flag": "yellow" },    // Sarı arka plan
+    { "id": 4, "name": "Alice", "flag": null }       // Normal (renksiz)
+  ]
+}
+```
+
+### Desteklenen Renkler
+
+DynamicGrid aşağıdaki renkleri destekler (soft & matte):
+
+| Renk | Kod | Görünüm |
+|------|-----|---------|
+| `black` | `rgba(64, 64, 64, 0.08)` | Yumuşak koyu gri arka plan |
+| `red` | `rgba(239, 68, 68, 0.12)` | Mat yumuşak kırmızı arka plan |
+| `yellow` | `rgba(251, 191, 36, 0.15)` | Mat yumuşak sarı arka plan |
+| `blue` | `rgba(59, 130, 246, 0.12)` | Mat yumuşak mavi arka plan |
+| `green` | `rgba(34, 197, 94, 0.12)` | Mat yumuşak yeşil arka plan |
+
+### Flag Özellikleri
+
+- **Case Insensitive**: `RED`, `red`, `Red` hepsi çalışır
+- **Nested Field Desteği**: `user.status.flag` gibi nested field'lar desteklenir
+- **Güvenli**: Tanımsız renk gelirse arka plan eklenmez
+- **Performanslı**: Sadece `enableFlag={true}` olduğunda çalışır
+- **Soft Renkler**: Arka plan renkleri göze rahatsızlık vermeyecek şekilde soft
+
+### Kullanım Senaryoları
+
+- **Öncelik Gösterimi**: Yüksek öncelikli kayıtları kırmızı ile işaretle
+- **Durum Gösterimi**: Onaylanmış/onaylanmamış kayıtları farklı renklerle göster
+- **Kategori İşaretleme**: Farklı kategorileri renklerle ayır
+- **Uyarı Sistemi**: Kritik kayıtları görsel olarak vurgula
+- **İş Akışı**: Süreç adımlarını renklerle göster
+
+## 🔢 Total Records Display
+
+DynamicGrid'de toplam kayıt sayısını tablonun sağ üst köşesinde gösterebilirsiniz. Bu özellik, kullanıcılara toplam veri miktarı hakkında hızlı bilgi sağlar.
+
+### Total Records Kullanımı
+
+```tsx
+<DynamicGrid
+  baseUrl="https://api.example.com"
+  endpoint="/users"
+  columnSettings={columnSettings}
+  showTotalRecords={true}                    // Toplam kayıt göster
+  totalRecordsLabel="Toplam: {} kayıt"       // Özel label (opsiyonel)
+/>
+```
+
+### Label Format Örnekleri
+
+#### Varsayılan
+```tsx
+<DynamicGrid
+  showTotalRecords={true}
+  // totalRecordsLabel="Toplam: {}" // Default
+/>
+// Çıktı: "Toplam: 1.234"
+```
+
+#### Türkçe - Detaylı
+```tsx
+<DynamicGrid
+  showTotalRecords={true}
+  totalRecordsLabel="Toplam: {} kayıt bulundu"
+/>
+// Çıktı: "Toplam: 1.234 kayıt bulundu"
+```
+
+#### Türkçe - Kısa
+```tsx
+<DynamicGrid
+  showTotalRecords={true}
+  totalRecordsLabel="{} kayıt"
+/>
+// Çıktı: "1.234 kayıt"
+```
+
+#### İngilizce
+```tsx
+<DynamicGrid
+  showTotalRecords={true}
+  totalRecordsLabel="Total: {} records"
+/>
+// Çıktı: "Total: 1,234 records"
+```
+
+#### Sadece Sayı
+```tsx
+<DynamicGrid
+  showTotalRecords={true}
+  totalRecordsLabel="{}"
+/>
+// Çıktı: "1.234"
+```
+
+### Total Records Özellikleri
+
+- **Konum**: Tablonun üstünde, sağ üst köşede
+- **Boyut**: Çok küçük (11px font size)
+- **Stil**: Dimmed renk (soluk gri)
+- **Format**: Türkçe binlik ayırıcı (1.234.567)
+- **Placeholder**: `{}` yerine sayı konur
+- **Esnek**: İstediğin metni yazabilirsin
+
+### API Response Formatı
+
+API'den dönen response şu formatta olmalı:
+
+```json
+{
+  "data": [...],
+  "total": 1234,              // Toplam kayıt sayısı
+  "total_pages": 25,
+  "page": 1
+}
+```
+
+### Kullanım Senaryoları
+
+- **Veri Büyüklüğü**: Kullanıcılara toplam veri miktarını göster
+- **Filtreleme Sonuçları**: Filtre sonucunda kaç kayıt bulunduğunu göster
+- **Raporlama**: Rapor içindeki toplam kayıt sayısını göster
+- **Dashboard**: Dashboard widget'larında özet bilgi ver
 
 ## 🔐 Token Usage
 

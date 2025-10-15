@@ -51,6 +51,10 @@ interface DynamicGridProps {
     pageSize?: number;
     enablePagination?: boolean;
     actionColumnPosition?: 'start' | 'end';
+    enableFlag?: boolean;
+    flagField?: string;
+    showTotalRecords?: boolean;
+    totalRecordsLabel?: string;
     queryParams?: Record<string, string>;
     onRowAction?: (actionName: string, rowData: any) => void;
     onRowSelected?: (selectedRows: any[]) => void;
@@ -72,5 +76,5 @@ interface DynamicGridProps {
     enableGrouping?: boolean;
     groupSettings?: ColumnGroup[];
 }
-export default function DynamicGrid({ baseUrl, endpoint, columnSettings, enableEdit, enableCheckbox, tokenRequired, pageSize, enablePagination, actionColumnPosition, queryParams, onRowAction, onRowSelected, isMenuAction, tableSettings, footerSettings, enableGrouping, groupSettings, }: DynamicGridProps): React.JSX.Element;
+export default function DynamicGrid({ baseUrl, endpoint, columnSettings, enableEdit, enableCheckbox, tokenRequired, pageSize, enablePagination, actionColumnPosition, enableFlag, flagField, showTotalRecords, totalRecordsLabel, queryParams, onRowAction, onRowSelected, isMenuAction, tableSettings, footerSettings, enableGrouping, groupSettings, }: DynamicGridProps): React.JSX.Element;
 export {};

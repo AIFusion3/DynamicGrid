@@ -75,6 +75,10 @@ interface DynamicGridProps {
   pageSize?: number;
   enablePagination?: boolean;
   actionColumnPosition?: 'start' | 'end';
+  enableFlag?: boolean;
+  flagField?: string;
+  showTotalRecords?: boolean;
+  totalRecordsLabel?: string;
   queryParams?: Record<string, string>;
   onRowAction?: (actionName: string, rowData: any) => void;
   onRowSelected?: (selectedRows: any[]) => void;
@@ -107,6 +111,10 @@ export default function DynamicGrid({
   pageSize = 10,
   enablePagination = true,
   actionColumnPosition = 'end',
+  enableFlag = false,
+  flagField = 'flag',
+  showTotalRecords = false,
+  totalRecordsLabel = 'Toplam: {}',
   queryParams = {},
   onRowAction,
   onRowSelected,
@@ -129,6 +137,7 @@ export default function DynamicGrid({
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
   const [editingCell, setEditingCell] = useState<{
     rowIndex: number;
     field: string;
@@ -137,6 +146,26 @@ export default function DynamicGrid({
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const [footerData, setFooterData] = useState<any>(null);
   const [footerLoading, setFooterLoading] = useState(false);
+
+  // Flag color palette - soft and matte colors
+  const flagColors: Record<string, string> = {
+    black: 'rgba(64, 64, 64, 0.08)',      // Soft dark gray
+    red: 'rgba(239, 68, 68, 0.12)',       // Soft matte red
+    yellow: 'rgba(251, 191, 36, 0.15)',   // Soft matte yellow
+    blue: 'rgba(59, 130, 246, 0.12)',     // Soft matte blue
+    green: 'rgba(34, 197, 94, 0.12)',     // Soft matte green
+  };
+
+  // Get row background color based on flag
+  const getRowBackgroundColor = (row: any): string | undefined => {
+    if (!enableFlag) return undefined;
+    
+    const flagValue = getNestedValue(row, flagField);
+    if (!flagValue) return undefined;
+    
+    const colorKey = flagValue.toLowerCase().trim();
+    return flagColors[colorKey] || undefined;
+  };
 
   // Grouping helper functions
   const getColumnGroupInfo = (field: string) => {
@@ -219,7 +248,8 @@ export default function DynamicGrid({
       const result = await response.json();
 
       setData(result.data);
-      setTotalPages( result.total_pages || result.page || 1);
+      setTotalPages(result.total_pages || result.page || 1);
+      setTotalRecords(result.total || 0);
 
     } catch (error) {
       console.error('Fetch error:', error);
@@ -488,6 +518,24 @@ export default function DynamicGrid({
         }}
       >
         <LoadingOverlay visible={loading} />
+        {showTotalRecords && (
+          <Box style={{ 
+            display: 'flex', 
+            justifyContent: 'flex-end', 
+            marginBottom: '8px' 
+          }}>
+            <Text 
+              size="xs" 
+              c="dimmed"
+              style={{ 
+                fontSize: '11px',
+                fontWeight: 500
+              }}
+            >
+              {totalRecordsLabel.replace('{}', totalRecords.toLocaleString('tr-TR'))}
+            </Text>
+          </Box>
+        )}
         <Box style={{ flex: 1 }}>
           {(() => {
             const tableComponent = (
@@ -628,7 +676,12 @@ export default function DynamicGrid({
                 </Table.Thead>
                 <Table.Tbody>
                   {data.map((row, rowIndex) => (
-                    <Table.Tr key={row.id || rowIndex}>
+                    <Table.Tr 
+                      key={row.id || rowIndex}
+                      style={{ 
+                        backgroundColor: getRowBackgroundColor(row)
+                      }}
+                    >
                       {enableCheckbox && (
                         <Table.Td>
                           <Checkbox
