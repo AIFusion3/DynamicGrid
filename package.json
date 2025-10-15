@@ -1,6 +1,6 @@
 {
   "name": "dynamic-grid",
-  "version": "1.8.10",
+  "version": "3.0.2",
   "main": "dist/DynamicGrid.js",
   "types": "dist/DynamicGrid.d.ts",
   "scripts": {
@@ -18,26 +18,27 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@mantine/core": "^7.17.7",
-    "@mantine/hooks": "^7.17.7",
-    "@mantine/notifications": "^7.17.7",
+    "@mantine/core": "^8.3.5",
+    "@mantine/hooks": "^8.3.5",
+    "@mantine/notifications": "^8.3.5",
     "@tabler/icons-react": "^3.29.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
   },
   "peerDependencies": {
-    "@mantine/core": "^7.17.7",
-    "@mantine/hooks": "^7.17.7",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "@mantine/core": "^8.3.5",
+    "@mantine/hooks": "^8.3.5",
+    "@mantine/notifications": "^8.3.5",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
-    "@types/node": "^22.13.1",
-    "@types/react": "^19.0.8",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
     "jest": "^29.7.0",
-    "typescript": "^5.7.3"
+    "typescript": "^5"
   }
 }

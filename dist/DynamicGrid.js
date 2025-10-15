@@ -56,7 +56,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 import { useEffect, useState } from 'react';
-import { Table, TextInput, Group, Text, ActionIcon, Box, LoadingOverlay, Pagination, Button, MantineProvider, Checkbox, Menu, } from '@mantine/core';
+import { Table, TextInput, Group, Text, ActionIcon, Box, LoadingOverlay, Pagination, Button, Checkbox, Menu, MantineProvider, } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import React from 'react';
 import { IconCheck, IconX, IconDotsVertical, IconArrowsSort } from '@tabler/icons-react';

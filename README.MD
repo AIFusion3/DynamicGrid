@@ -284,7 +284,7 @@ interface ColumnSetting {
   width?: string | number;     // Column width
   sortable?: boolean;          // Sortable
   editable?: boolean;          // Editable
-  displayType?: 'text' | 'date' | 'datetime' | 'number' | 'money' | 'image' | 'link' | 'chip';
+  displayType?: 'text' | 'date' | 'datetime' | 'datetimez' | 'number' | 'money' | 'image' | 'link' | 'chip';
   format?: string;             // Value format
   url?: string;                // URL for link
   target?: string;             // Link target
@@ -725,14 +725,138 @@ MIT
 
 ## 📅 Display Types
 
-- **text**: Basic text display
-- **date**: Date only format (DD/MM/YYYY)
-- **datetime**: Date and time format (DD/MM/YYYY HH:MM)
-- **number**: Formatted number
-- **money**: Currency format
-- **image**: Image display
-- **link**: Clickable link
-- **chip**: Colored badge/chip
+DynamicGrid farklı veri tiplerini otomatik olarak formatlar ve görselleştirir.
+
+### Tarih ve Zaman Tipleri
+
+#### `date` - Sadece Tarih
+Sadece tarih bilgisini Türkçe formatında gösterir.
+
+```typescript
+{
+  field: 'birthDate',
+  title: 'Doğum Tarihi',
+  displayType: 'date'
+}
+```
+- **Giriş**: `"2025-07-28T10:45:04.738Z"`
+- **Çıktı**: `"28.07.2025"`
+
+#### `datetime` - Tarih ve Saat (UTC)
+ISO 8601 formatındaki tarihleri UTC olarak parse eder ve Türkçe formatında gösterir. Database'den gelen tarih zaten doğru timezone'daysa (örn: +3) timezone offset'i eklemez.
+
+```typescript
+{
+  field: 'createdAt',
+  title: 'Oluşturulma Tarihi',
+  displayType: 'datetime'
+}
+```
+- **Giriş**: `"2025-07-28T10:45:04.738Z"`
+- **Çıktı**: `"28.07.2025 10:45"`
+- **Özellik**: UTC değerlerini kullanır, browser timezone'unu dikkate almaz
+
+#### `datetimez` - Tarih ve Saat (Timezone ile)
+ISO 8601 formatındaki tarihleri browser timezone'una göre dönüştürür ve Türkçe formatında gösterir.
+
+```typescript
+{
+  field: 'updatedAt',
+  title: 'Güncelleme Tarihi',
+  displayType: 'datetimez'
+}
+```
+- **Giriş**: `"2025-07-28T10:45:04.738Z"`
+- **Çıktı**: `"28.07.2025 13:45"` (Europe/Istanbul için +3 saat eklenmiş)
+- **Özellik**: `toLocaleString` ile timezone dönüşümü yapar
+
+### Diğer Veri Tipleri
+
+#### `text` - Metin
+Veriyi olduğu gibi metin olarak gösterir.
+
+```typescript
+{
+  field: 'name',
+  title: 'İsim',
+  displayType: 'text'
+}
+```
+
+#### `number` - Sayı
+Sayısal değerleri binlik ayırıcılarla formatlar.
+
+```typescript
+{
+  field: 'quantity',
+  title: 'Miktar',
+  displayType: 'number'
+}
+```
+- **Giriş**: `1234567`
+- **Çıktı**: `"1.234.567"`
+
+#### `money` - Para Birimi
+Sayısal değerleri Türk Lirası formatında gösterir.
+
+```typescript
+{
+  field: 'price',
+  title: 'Fiyat',
+  displayType: 'money'
+}
+```
+- **Giriş**: `1234.56`
+- **Çıktı**: `"₺1.234,56"`
+
+#### `image` - Resim
+URL'den resim gösterir.
+
+```typescript
+{
+  field: 'avatar',
+  title: 'Avatar',
+  displayType: 'image',
+  imageStyle: {
+    width: '50px',
+    height: '50px',
+    borderRadius: '50%'
+  }
+}
+```
+
+#### `link` - Bağlantı
+Tıklanabilir link oluşturur.
+
+```typescript
+{
+  field: 'website',
+  title: 'Website',
+  displayType: 'link',
+  target: '_blank',
+  linkStyle: {
+    color: '#1976d2',
+    textDecoration: 'underline'
+  }
+}
+```
+
+#### `chip` - Etiket/Badge
+Koşullu renkli etiketler gösterir.
+
+```typescript
+{
+  field: 'status',
+  title: 'Durum',
+  displayType: 'chip',
+  chipCondition: {
+    trueLabel: 'Aktif',
+    falseLabel: 'Pasif',
+    trueColor: 'green',
+    falseColor: 'red'
+  }
+}
+```
 
 ## 📊 Column Grouping (Sütun Gruplama)
 

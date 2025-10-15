@@ -11,9 +11,9 @@ import {
   LoadingOverlay,
   Pagination,
   Button,
-  MantineProvider,
   Checkbox,
   Menu,
+  MantineProvider,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import React from 'react';
