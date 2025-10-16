@@ -24,6 +24,10 @@ export interface ColumnGroup {
     fields: string[];
     style?: React.CSSProperties;
 }
+export interface DynamicGridRef {
+    clearSelection: () => void;
+    getSelectedRows: () => any[];
+}
 export interface ColumnSetting {
     field: string;
     title: string;
@@ -76,5 +80,5 @@ interface DynamicGridProps {
     enableGrouping?: boolean;
     groupSettings?: ColumnGroup[];
 }
-export default function DynamicGrid({ baseUrl, endpoint, columnSettings, enableEdit, enableCheckbox, tokenRequired, pageSize, enablePagination, actionColumnPosition, enableFlag, flagField, showTotalRecords, totalRecordsLabel, queryParams, onRowAction, onRowSelected, isMenuAction, tableSettings, footerSettings, enableGrouping, groupSettings, }: DynamicGridProps): React.JSX.Element;
-export {};
+declare const DynamicGrid: React.ForwardRefExoticComponent<DynamicGridProps & React.RefAttributes<DynamicGridRef>>;
+export default DynamicGrid;

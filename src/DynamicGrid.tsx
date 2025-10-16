@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useImperativeHandle, forwardRef } from 'react';
 import {
   Table,
   TextInput,
@@ -45,6 +45,11 @@ export interface ColumnGroup {
   title: string;
   fields: string[];
   style?: React.CSSProperties;
+}
+
+export interface DynamicGridRef {
+  clearSelection: () => void;
+  getSelectedRows: () => any[];
 }
 
 export interface ColumnSetting {
@@ -101,7 +106,7 @@ interface DynamicGridProps {
   groupSettings?: ColumnGroup[];
 }
 
-export default function DynamicGrid({
+const DynamicGrid = forwardRef<DynamicGridRef, DynamicGridProps>(({
   baseUrl,
   endpoint,
   columnSettings,
@@ -130,7 +135,7 @@ export default function DynamicGrid({
   },
   enableGrouping = false,
   groupSettings = [],
-}: DynamicGridProps) {
+}, ref) => {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortField, setSortField] = useState<string | null>(null);
@@ -155,6 +160,15 @@ export default function DynamicGrid({
     blue: 'rgba(59, 130, 246, 0.12)',     // Soft matte blue
     green: 'rgba(34, 197, 94, 0.12)',     // Soft matte green
   };
+
+  // Expose methods via ref
+  useImperativeHandle(ref, () => ({
+    clearSelection: () => {
+      setSelectedRows([]);
+      onRowSelected?.([]);
+    },
+    getSelectedRows: () => selectedRows,
+  }));
 
   // Get row background color based on flag
   const getRowBackgroundColor = (row: any): string | undefined => {
@@ -820,4 +834,8 @@ export default function DynamicGrid({
       </Box>
     </MantineProvider>
   );
-}
+});
+
+DynamicGrid.displayName = 'DynamicGrid';
+
+export default DynamicGrid;

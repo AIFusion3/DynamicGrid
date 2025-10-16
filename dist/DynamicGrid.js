@@ -55,13 +55,12 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useImperativeHandle, forwardRef } from 'react';
 import { Table, TextInput, Group, Text, ActionIcon, Box, LoadingOverlay, Pagination, Button, Checkbox, Menu, MantineProvider, } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import React from 'react';
 import { IconCheck, IconX, IconDotsVertical, IconArrowsSort } from '@tabler/icons-react';
-export default function DynamicGrid(_a) {
-    var _this = this;
+var DynamicGrid = forwardRef(function (_a, ref) {
     var baseUrl = _a.baseUrl, endpoint = _a.endpoint, columnSettings = _a.columnSettings, _b = _a.enableEdit, enableEdit = _b === void 0 ? false : _b, _c = _a.enableCheckbox, enableCheckbox = _c === void 0 ? false : _c, _d = _a.tokenRequired, tokenRequired = _d === void 0 ? false : _d, _e = _a.pageSize, pageSize = _e === void 0 ? 10 : _e, _f = _a.enablePagination, enablePagination = _f === void 0 ? true : _f, _g = _a.actionColumnPosition, actionColumnPosition = _g === void 0 ? 'end' : _g, _h = _a.enableFlag, enableFlag = _h === void 0 ? false : _h, _j = _a.flagField, flagField = _j === void 0 ? 'flag' : _j, _k = _a.showTotalRecords, showTotalRecords = _k === void 0 ? false : _k, _l = _a.totalRecordsLabel, totalRecordsLabel = _l === void 0 ? 'Toplam: {}' : _l, _m = _a.queryParams, queryParams = _m === void 0 ? {} : _m, onRowAction = _a.onRowAction, onRowSelected = _a.onRowSelected, _o = _a.isMenuAction, isMenuAction = _o === void 0 ? false : _o, _p = _a.tableSettings, tableSettings = _p === void 0 ? {
         highlightOnHover: true,
         withTableBorder: true,
@@ -89,6 +88,14 @@ export default function DynamicGrid(_a) {
         blue: 'rgba(59, 130, 246, 0.12)', // Soft matte blue
         green: 'rgba(34, 197, 94, 0.12)', // Soft matte green
     };
+    // Expose methods via ref
+    useImperativeHandle(ref, function () { return ({
+        clearSelection: function () {
+            setSelectedRows([]);
+            onRowSelected === null || onRowSelected === void 0 ? void 0 : onRowSelected([]);
+        },
+        getSelectedRows: function () { return selectedRows; },
+    }); });
     // Get row background color based on flag
     var getRowBackgroundColor = function (row) {
         if (!enableFlag)
@@ -137,7 +144,7 @@ export default function DynamicGrid(_a) {
         }
         return true;
     };
-    var fetchData = function () { return __awaiter(_this, void 0, void 0, function () {
+    var fetchData = function () { return __awaiter(void 0, void 0, void 0, function () {
         var headers, token, params_1, response, result, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -197,7 +204,7 @@ export default function DynamicGrid(_a) {
             }
         });
     }); };
-    var fetchFooterData = function () { return __awaiter(_this, void 0, void 0, function () {
+    var fetchFooterData = function () { return __awaiter(void 0, void 0, void 0, function () {
         var headers, token, params_2, response, result, error_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -377,7 +384,7 @@ export default function DynamicGrid(_a) {
             return;
         setEditingCell({ rowIndex: rowIndex, field: field, value: value });
     };
-    var handleEditSave = function () { return __awaiter(_this, void 0, void 0, function () {
+    var handleEditSave = function () { return __awaiter(void 0, void 0, void 0, function () {
         var headers, token, setting, updateField, newData, error_3;
         var _a, _b;
         return __generator(this, function (_c) {
@@ -550,4 +557,6 @@ export default function DynamicGrid(_a) {
             })()),
             enablePagination && (React.createElement(Group, { justify: "center", mt: "md", mb: "md" },
                 React.createElement(Pagination, { value: currentPage, onChange: setCurrentPage, total: totalPages }))))));
-}
+});
+DynamicGrid.displayName = 'DynamicGrid';
+export default DynamicGrid;
